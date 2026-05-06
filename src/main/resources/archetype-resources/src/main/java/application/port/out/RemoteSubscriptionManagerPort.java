@@ -1,10 +1,14 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.application.port.out;
 
+import ${package}.domain.model.Subscription;
 import ${package}.domain.model.command.SubscriptionCommand;
-import com.github.swim_developer.framework.consumer.application.port.out.SubscriptionManagerActions;
+import ${package}.framework.application.model.ProviderConfiguration;
 
-public interface RemoteSubscriptionManagerPort extends SubscriptionManagerActions<SubscriptionCommand> {
+public interface RemoteSubscriptionManagerPort {
+
+    Subscription createSubscription(SubscriptionCommand command, ProviderConfiguration provider);
+
+    String updateSubscriptionStatus(String subscriptionId, String newStatus, ProviderConfiguration provider);
+
+    void deleteSubscription(String subscriptionId, ProviderConfiguration provider);
 }

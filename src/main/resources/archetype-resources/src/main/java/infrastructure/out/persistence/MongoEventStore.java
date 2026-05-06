@@ -1,15 +1,12 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.infrastructure.out.persistence;
 
 import ${package}.domain.model.Event;
 import ${package}.application.port.out.EventStore;
-import com.github.swim_developer.framework.application.model.OutboxDeliveryStatus;
-import com.github.swim_developer.framework.consumer.application.port.out.SwimEventCountPort;
-import com.github.swim_developer.framework.consumer.application.port.out.SwimOutboxEventStorePort;
-import com.github.swim_developer.framework.consumer.infrastructure.out.idempotency.SwimIdempotencyEventPort;
-import com.github.swim_developer.framework.domain.model.SwimOutboxEvent;
+import ${package}.framework.application.model.OutboxDeliveryStatus;
+import ${package}.framework.consumer.application.port.out.SwimEventCountPort;
+import ${package}.framework.consumer.application.port.out.SwimOutboxEventStorePort;
+import ${package}.framework.consumer.infrastructure.out.idempotency.SwimIdempotencyEventPort;
+import ${package}.framework.domain.model.SwimOutboxEvent;
 import io.quarkus.mongodb.panache.PanacheMongoRepository;
 import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -23,7 +20,7 @@ import java.util.Optional;
 public class MongoEventStore implements PanacheMongoRepository<Event>, EventStore, SwimIdempotencyEventPort, SwimOutboxEventStorePort, SwimEventCountPort {
 
     private static final String FIELD_SUBSCRIPTION_ID = "subscriptionId";
-    private static final String FIELD_DELIVERY_STATUS = "kafkaStatus";
+    private static final String FIELD_DELIVERY_STATUS = "deliveryStatus";
     private static final int FIRST_PAGE = 0;
 
     @Override
@@ -41,7 +38,6 @@ public class MongoEventStore implements PanacheMongoRepository<Event>, EventStor
         return find("messageId", messageId).firstResultOptional();
     }
 
-    @Override
     public List<Event> findBySubscriptionId(String subscriptionId) {
         return find(FIELD_SUBSCRIPTION_ID, subscriptionId).list();
     }
@@ -80,24 +76,20 @@ public class MongoEventStore implements PanacheMongoRepository<Event>, EventStor
         return count(FIELD_SUBSCRIPTION_ID + " = ?1 and contentHash = ?2", subscriptionId, contentHash) > 0;
     }
 
-    @Override
     public List<Event> findByDeliveryStatus(OutboxDeliveryStatus status) {
         return find(FIELD_DELIVERY_STATUS, status).list();
     }
 
-    @Override
     public long updateDeliveryStatusByMessageId(String messageId, OutboxDeliveryStatus status) {
         return update(FIELD_DELIVERY_STATUS, status).where("messageId", messageId);
     }
 
-    @Override
     public List<Event> findPendingDispatch(int limit) {
         return find(FIELD_DELIVERY_STATUS, OutboxDeliveryStatus.PENDING)
                 .page(Page.of(FIRST_PAGE, limit))
                 .list();
     }
 
-    @Override
     public List<String> findRecentContentHashes(Instant since, int limit) {
         return find("receivedAt >= ?1", since)
                 .page(Page.of(FIRST_PAGE, limit))

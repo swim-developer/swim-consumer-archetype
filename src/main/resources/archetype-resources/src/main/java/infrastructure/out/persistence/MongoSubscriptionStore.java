@@ -1,15 +1,12 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.infrastructure.out.persistence;
 
 import ${package}.domain.model.Subscription;
 import ${package}.application.port.out.SubscriptionStore;
 import ${package}.infrastructure.out.persistence.document.SubscriptionDocument;
 import ${package}.infrastructure.out.persistence.repository.SubscriptionDocumentRepository;
-import com.github.swim_developer.framework.consumer.application.port.out.SwimPersistenceHealthPort;
-import com.github.swim_developer.framework.consumer.application.port.out.SwimSubscriptionCountPort;
-import com.github.swim_developer.framework.consumer.application.port.out.SwimSubscriptionListPort;
+import ${package}.framework.consumer.application.port.out.SwimPersistenceHealthPort;
+import ${package}.framework.consumer.application.port.out.SwimSubscriptionCountPort;
+import ${package}.framework.consumer.application.port.out.SwimSubscriptionListPort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 

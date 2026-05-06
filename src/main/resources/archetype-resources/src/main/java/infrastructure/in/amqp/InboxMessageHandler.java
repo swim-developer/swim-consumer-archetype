@@ -1,15 +1,13 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.infrastructure.in.amqp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ${package}.application.usecase.EventProcessingUseCase;
+import ${package}.domain.model.Event;
 import ${package}.infrastructure.out.xml.XmlEnvelopeParser;
-import com.github.swim_developer.extension.inbox.reader.kafka.AbstractKafkaInboxReader;
-import com.github.swim_developer.framework.application.model.PreparedEvent;
-import com.github.swim_developer.framework.application.model.ProcessingOutcome;
-import com.github.swim_developer.framework.infrastructure.out.messaging.InboxEnvelope;
+import ${package}.extension.inbox.reader.kafka.AbstractKafkaInboxReader;
+import ${package}.framework.application.model.PreparedEvent;
+import ${package}.framework.application.model.ProcessingOutcome;
+import ${package}.framework.infrastructure.out.messaging.InboxEnvelope;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
@@ -44,11 +42,10 @@ public class InboxMessageHandler extends AbstractKafkaInboxReader {
         this.envelopeParser = envelopeParser;
     }
 
-    // TODO: Update channel name to match your Kafka inbox topic config
     @Incoming("in-${serviceName}-inbox")
     @Blocking
     public CompletionStage<Void> onInboxBatch(KafkaRecordBatch<String, String> batch) {
-        List<PreparedEvent<?>> prepared = prepareBatch(batch, eventProcessor.eventProcessingOrchestrator());
+        List<PreparedEvent<Event>> prepared = prepareBatch(batch, eventProcessor.eventProcessingOrchestrator());
 
         if (!prepared.isEmpty()) {
             eventProcessor.batchPersistAndDispatch(prepared);
@@ -64,11 +61,11 @@ public class InboxMessageHandler extends AbstractKafkaInboxReader {
         return envelopeParser.splitEnvelope(rawPayload);
     }
 
-    @WithSpan("${serviceName}.consumer.event.process")
+    @WithSpan("${collectionPrefix}.consumer.event.process")
     @Override
     public void processSingleMessage(InboxEnvelope envelope, String xmlPayload, int index) {
-        Span.current().setAttribute("${serviceName}.subscription", envelope.subscriptionId());
-        Span.current().setAttribute("${serviceName}.queue", envelope.queueName());
+        Span.current().setAttribute("${collectionPrefix}.subscription", envelope.subscriptionId());
+        Span.current().setAttribute("${collectionPrefix}.queue", envelope.queueName());
 
         ProcessingOutcome outcome = eventProcessor.processAndPersistSingleMessage(
                 envelope.subscriptionId(),
@@ -76,11 +73,11 @@ public class InboxMessageHandler extends AbstractKafkaInboxReader {
                 envelope.amqpMessageId(),
                 xmlPayload,
                 index);
-        Span.current().setAttribute("${serviceName}.outcome", outcome.name());
+        Span.current().setAttribute("${collectionPrefix}.outcome", outcome.name());
     }
 
     @Override
     public String getMetricPrefix() {
-        return "${serviceName}";
+        return "${collectionPrefix}";
     }
 }

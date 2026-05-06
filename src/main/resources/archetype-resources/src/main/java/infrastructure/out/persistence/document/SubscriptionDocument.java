@@ -1,10 +1,7 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.infrastructure.out.persistence.document;
 
 import ${package}.domain.model.Subscription;
-import com.github.swim_developer.framework.persistence.mongodb.MongoSubscriptionDocumentPort;
+import ${package}.framework.persistence.mongodb.MongoSubscriptionDocumentPort;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,3 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.application.service;
 
 import io.micrometer.core.instrument.Counter;
@@ -24,12 +21,12 @@ public class ProcessingMetrics {
         // TODO: Define domain-specific invalid event reasons
         String[] invalidReasons = {REASON_INVALID};
         for (String reason : invalidReasons) {
-            invalidCounters.put(reason, Counter.builder("${serviceName}_events_invalid_total")
+            invalidCounters.put(reason, Counter.builder("${collectionPrefix}_events_invalid_total")
                     .tag("reason", reason)
                     .description("Total invalid ${serviceDisplayName} events by reason")
                     .register(meterRegistry));
         }
-        duplicateMessagesCounter = Counter.builder("${serviceName}_duplicate_messages_total")
+        duplicateMessagesCounter = Counter.builder("${collectionPrefix}_duplicate_messages_total")
                 .description("Total duplicate ${serviceDisplayName} messages discarded")
                 .register(meterRegistry);
     }

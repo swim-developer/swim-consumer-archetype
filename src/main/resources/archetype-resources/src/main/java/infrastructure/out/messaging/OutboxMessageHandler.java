@@ -1,13 +1,10 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.infrastructure.out.messaging;
 
-import com.github.swim_developer.framework.consumer.application.messaging.outbox.AbstractOutboxEventConsumer;
-import com.github.swim_developer.framework.consumer.application.messaging.outbox.OutboxRouterFanOut;
-import com.github.swim_developer.framework.consumer.application.port.out.SwimOutboxRetryPort;
-import com.github.swim_developer.framework.domain.model.SwimOutboxEvent;
-import com.github.swim_developer.framework.infrastructure.out.cache.HandoffCache;
+import ${package}.framework.consumer.application.messaging.outbox.AbstractOutboxEventConsumer;
+import ${package}.framework.consumer.application.messaging.outbox.OutboxRouterFanOut;
+import ${package}.framework.consumer.application.port.out.SwimOutboxRetryPort;
+import ${package}.framework.domain.model.SwimOutboxEvent;
+import ${package}.framework.infrastructure.out.cache.HandoffCache;
 import ${package}.domain.model.Event;
 import ${package}.infrastructure.out.persistence.MongoEventStore;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
@@ -50,7 +47,7 @@ public class OutboxMessageHandler extends AbstractOutboxEventConsumer<Event> imp
     @Timeout(10000)
     @Retry(maxRetries = 3, delay = 1000)
     @Bulkhead(250)
-    @WithSpan("${serviceName}.consumer.outbox.kafka")
+    @WithSpan("${collectionPrefix}.consumer.outbox.kafka")
     public void processOutboxEvent(String eventId) {
         super.processOutboxEvent(eventId);
     }

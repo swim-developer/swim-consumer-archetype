@@ -1,9 +1,6 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.domain.model;
 
-import com.github.swim_developer.framework.domain.model.SwimConsumerSubscription;
+import ${package}.framework.domain.model.SwimConsumerSubscription;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,8 +30,9 @@ public class Subscription implements SwimConsumerSubscription {
     private String providerName;
     private String providerId;
     private String heartbeatQueue;
-
-    // TODO: Add domain-specific subscription fields
+    private String topic;
+    private List<String> aerodromes;
+    private List<String> messageTypes;
 
     @Override
     public Map<String, Set<String>> projectFilterDimensions() {

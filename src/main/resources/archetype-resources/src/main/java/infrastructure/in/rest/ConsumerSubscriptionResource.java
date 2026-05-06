@@ -1,6 +1,3 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.infrastructure.in.rest;
 
 import ${package}.domain.model.Subscription;
@@ -8,11 +5,11 @@ import ${package}.domain.model.command.SubscriptionCommand;
 import ${package}.application.port.in.ManageSubscriptionPort;
 import ${package}.application.port.out.SubscriptionStore;
 import ${package}.infrastructure.in.rest.dto.SubscriptionRequest;
-import com.github.swim_developer.framework.consumer.infrastructure.out.config.subscription.AbstractSubscriptionConfigParser;
-import static com.github.swim_developer.framework.consumer.infrastructure.in.rest.ConsumerRestResponses.*;
-import com.github.swim_developer.framework.infrastructure.util.StringUtil;
-import com.github.swim_developer.framework.application.model.SubscriptionStatusUpdate;
-import com.github.swim_developer.framework.domain.model.SubscriptionStatus;
+import ${package}.framework.consumer.infrastructure.out.config.subscription.AbstractSubscriptionConfigParser;
+import static ${package}.framework.consumer.infrastructure.in.rest.ConsumerRestResponses.*;
+import ${package}.framework.infrastructure.util.StringUtil;
+import ${package}.framework.application.model.SubscriptionStatusUpdate;
+import ${package}.framework.domain.model.SubscriptionStatus;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -166,7 +163,9 @@ public class ConsumerSubscriptionResource {
                 request.topic(),
                 request.queueName(),
                 request.provider(),
-                request.description()
+                request.description(),
+                List.of(),
+                List.of()
         );
     }
 }

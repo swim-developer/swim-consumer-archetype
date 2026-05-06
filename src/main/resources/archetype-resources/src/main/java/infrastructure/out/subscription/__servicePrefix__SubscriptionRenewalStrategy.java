@@ -1,6 +1,3 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.infrastructure.out.subscription;
 
 import ${package}.domain.model.Subscription;
@@ -8,12 +5,12 @@ import ${package}.application.port.out.SubscriptionStore;
 import ${package}.infrastructure.out.client.SubscriptionManagerAdapter;
 import ${package}.infrastructure.out.client.SubscriptionManagerRestClient;
 import ${package}.infrastructure.in.rest.dto.SubscriptionResponse;
-import com.github.swim_developer.framework.consumer.infrastructure.out.config.provider.ProviderConfigParser;
-import com.github.swim_developer.framework.application.model.ProviderConfiguration;
-import com.github.swim_developer.framework.domain.model.SubscriptionRenewalInfo;
-import com.github.swim_developer.framework.domain.exception.SubscriptionRenewalException;
-import com.github.swim_developer.framework.domain.model.SubscriptionStatus;
-import com.github.swim_developer.framework.application.port.out.SubscriptionRenewalStrategy;
+import ${package}.framework.consumer.infrastructure.out.config.provider.ProviderConfigParser;
+import ${package}.framework.application.model.ProviderConfiguration;
+import ${package}.framework.domain.model.SubscriptionRenewalInfo;
+import ${package}.framework.domain.exception.SubscriptionRenewalException;
+import ${package}.framework.domain.model.SubscriptionStatus;
+import ${package}.framework.application.port.out.SubscriptionRenewalStrategy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +28,8 @@ public class ${servicePrefix}SubscriptionRenewalStrategy implements Subscription
 
     @Inject
     public ${servicePrefix}SubscriptionRenewalStrategy(SubscriptionStore subscriptionStore,
-                                                       SubscriptionManagerAdapter smClientRegistry,
-                                                       ProviderConfigParser providerConfigParser) {
+                                            SubscriptionManagerAdapter smClientRegistry,
+                                            ProviderConfigParser providerConfigParser) {
         this.subscriptionStore = subscriptionStore;
         this.smClientRegistry = smClientRegistry;
         this.providerConfigParser = providerConfigParser;

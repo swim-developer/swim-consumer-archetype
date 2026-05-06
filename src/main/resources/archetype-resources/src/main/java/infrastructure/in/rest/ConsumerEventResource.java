@@ -1,6 +1,3 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.infrastructure.in.rest;
 
 import ${package}.domain.model.Event;
@@ -9,8 +6,8 @@ import ${package}.application.port.out.EventStore;
 import ${package}.application.port.out.SubscriptionStore;
 import ${package}.infrastructure.out.mapper.SubscriptionMapper;
 import ${package}.infrastructure.in.rest.dto.EventDTO;
-import static com.github.swim_developer.framework.consumer.infrastructure.in.rest.ConsumerRestResponses.*;
-import com.github.swim_developer.framework.infrastructure.in.rest.PageResponse;
+import static ${package}.framework.consumer.infrastructure.in.rest.ConsumerRestResponses.*;
+import ${package}.framework.infrastructure.in.rest.PageResponse;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;

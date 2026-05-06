@@ -1,10 +1,10 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.infrastructure.in.rest.dto;
+
+import java.time.Instant;
 
 public record SubscriptionResponse(
         String subscriptionId,
         String subscriptionStatus,
-        String queueName
+        String queueName,
+        Instant subscriptionEnd
 ) {}

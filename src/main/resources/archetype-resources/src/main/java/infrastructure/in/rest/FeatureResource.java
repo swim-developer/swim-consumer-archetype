@@ -1,10 +1,7 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.infrastructure.in.rest;
 
-import com.github.swim_developer.framework.consumer.infrastructure.in.rest.AbstractFeatureResource;
-import com.github.swim_developer.framework.consumer.application.port.in.QueryFeaturesPort;
+import ${package}.framework.consumer.infrastructure.in.rest.AbstractFeatureResource;
+import ${package}.framework.consumer.application.port.in.SwimQueryFeaturesPort;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Path;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -14,7 +11,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 public class FeatureResource extends AbstractFeatureResource {
 
     @Inject
-    public FeatureResource(QueryFeaturesPort queryFeaturesPort) {
+    public FeatureResource(SwimQueryFeaturesPort queryFeaturesPort) {
         super(queryFeaturesPort);
     }
 }

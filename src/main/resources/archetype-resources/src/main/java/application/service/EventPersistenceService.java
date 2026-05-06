@@ -1,15 +1,12 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.application.service;
 
 import ${package}.application.port.out.EventStore;
 import ${package}.domain.model.Event;
-import com.github.swim_developer.framework.application.model.OutboxDeliveryStatus;
-import com.github.swim_developer.framework.application.model.ProcessingContext;
-import com.github.swim_developer.framework.application.port.out.SwimDeadLetterPort;
-import com.github.swim_developer.framework.consumer.application.messaging.outbox.OutboxRouterFanOut;
-import com.github.swim_developer.framework.consumer.application.messaging.processing.AbstractEventPersistenceService;
+import ${package}.framework.application.model.OutboxDeliveryStatus;
+import ${package}.framework.application.model.ProcessingContext;
+import ${package}.framework.application.port.out.SwimDeadLetterPort;
+import ${package}.framework.consumer.application.messaging.outbox.OutboxRouterFanOut;
+import ${package}.framework.consumer.application.messaging.processing.AbstractEventPersistenceService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -17,7 +14,7 @@ import java.time.Instant;
 import java.util.List;
 
 @ApplicationScoped
-public class EventPersistenceService extends AbstractEventPersistenceService<Object, Event> {
+public class EventPersistenceService extends AbstractEventPersistenceService<Event, Event> {
 
     private final EventStore repository;
 
@@ -29,17 +26,14 @@ public class EventPersistenceService extends AbstractEventPersistenceService<Obj
         this.repository = repository;
     }
 
-    // TODO: Replace Object with your domain-specific EventData type
-    // TODO: Map extracted event data fields to Event entity
     @Override
-    protected Event assembleEntity(ProcessingContext ctx, Object eventData, String contentHash) {
-        Event event = new Event();
+    protected Event assembleEntity(ProcessingContext ctx, Event event, String contentHash) {
         event.setSubscriptionId(ctx.subscriptionId());
-        event.setMessageId(ctx.compositeMessageId());
-        event.setRawXml(ctx.xmlPayload());
+        event.setMessageId(ctx.amqpMessageId());
+        event.setRawPayload(ctx.xmlPayload());
         event.setContentHash(contentHash);
-        event.setKafkaStatus(OutboxDeliveryStatus.SENT);
-        event.setReceivedAt(Instant.now());
+        event.setDeliveryStatus(OutboxDeliveryStatus.SENT);
+        event.setDispatchedAt(Instant.now());
         return event;
     }
 

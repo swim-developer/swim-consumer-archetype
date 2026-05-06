@@ -1,6 +1,3 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.application.port.out;
 
 import ${package}.domain.model.Event;
@@ -27,5 +24,11 @@ public interface EventStore {
 
     void update(Event event);
 
-    // TODO: Add domain-specific query methods
+    List<Event> findBySubscriptionIdPaginated(String subscriptionId, int page, int size);
+
+    long countBySubscriptionId(String subscriptionId);
+
+    List<Event> findBySubscriptionIdAndDateRange(String subscriptionId, Instant startDate, Instant endDate, int page, int size);
+
+    long countBySubscriptionIdAndDateRange(String subscriptionId, Instant startDate, Instant endDate);
 }

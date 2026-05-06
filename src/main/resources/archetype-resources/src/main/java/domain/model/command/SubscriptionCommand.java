@@ -1,6 +1,3 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.domain.model.command;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -9,18 +6,21 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
+import java.util.List;
 
 @RegisterForReflection
 public record SubscriptionCommand(
         String topic,
         String queueName,
         String provider,
-        String description
-        // TODO: Add domain-specific subscription parameters
+        String description,
+        List<String> messageTypes,
+        List<String> aerodromes
 ) {
     public String generateConfigHash() {
         String prov = provider != null ? provider : "";
-        return sha256(prov + topic);
+        String t = topic != null ? topic : "";
+        return sha256(prov + t);
     }
 
     private static String sha256(String content) {

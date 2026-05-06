@@ -1,6 +1,3 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.application.port.out;
 
 import ${package}.domain.model.Subscription;
@@ -23,9 +20,17 @@ public interface SubscriptionStore {
 
     List<Subscription> findActiveSubscriptions();
 
+    List<Subscription> findDeclaredSubscriptions();
+
     List<Subscription> findBySubscriptionEndBefore(Instant threshold);
 
     Optional<Subscription> findByConfigHash(String configHash);
+
+    Optional<Subscription> findByConfigHashAndType(String configHash, String type);
+
+    Optional<Subscription> findByQueueName(String queueName);
+
+    boolean deleteBySubscriptionId(String subscriptionId);
 
     long countSubscriptions();
 

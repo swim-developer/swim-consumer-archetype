@@ -1,9 +1,6 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.infrastructure.out.persistence;
 
-import com.github.swim_developer.framework.persistence.mongodb.AbstractMongoIndexInitializer;
+import ${package}.framework.persistence.mongodb.AbstractMongoIndexInitializer;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Indexes;

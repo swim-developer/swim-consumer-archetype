@@ -1,24 +1,25 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.application.service;
 
 import ${package}.application.port.out.SubscriptionStore;
+import ${package}.domain.model.Event;
 import ${package}.domain.model.Subscription;
-import com.github.swim_developer.framework.application.model.ProcessingContext;
-import com.github.swim_developer.framework.consumer.application.messaging.processing.SwimEventProcessorCallbacks;
-import com.github.swim_developer.framework.consumer.application.messaging.processing.SwimEventProcessorConfig;
+import ${package}.framework.application.model.ProcessingContext;
+import ${package}.framework.consumer.application.messaging.processing.SwimEventProcessorCallbacks;
+import ${package}.framework.consumer.application.messaging.processing.SwimEventProcessorConfig;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
-// TODO: Replace Object with your domain-specific EventData type
 @Slf4j
-public class ProcessorCallbacks implements SwimEventProcessorCallbacks<Object> {
+@ApplicationScoped
+public class ProcessorCallbacks implements SwimEventProcessorCallbacks<Event> {
 
     private final ProcessingMetrics metrics;
     private final SubscriptionStore subscriptionStore;
 
+    @Inject
     public ProcessorCallbacks(ProcessingMetrics metrics, SubscriptionStore subscriptionStore) {
         this.metrics = metrics;
         this.subscriptionStore = subscriptionStore;
@@ -44,7 +45,6 @@ public class ProcessorCallbacks implements SwimEventProcessorCallbacks<Object> {
     public void onExtractionFailure(ProcessingContext ctx, SwimEventProcessorConfig config) {
         metrics.incrementInvalid("INVALID");
         log.error("Invalid ${serviceDisplayName} message - MessageId: {}", ctx.compositeMessageId());
-        // TODO: Implement domain-specific extraction failure handling
     }
 
     @Override

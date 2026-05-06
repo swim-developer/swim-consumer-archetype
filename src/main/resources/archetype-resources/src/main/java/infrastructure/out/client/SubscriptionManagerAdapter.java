@@ -1,17 +1,14 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.infrastructure.out.client;
 
 import ${package}.domain.model.Subscription;
 import ${package}.domain.model.command.SubscriptionCommand;
 import ${package}.application.port.out.RemoteSubscriptionManagerPort;
-import com.github.swim_developer.framework.consumer.application.port.out.SwimRemoteFeatureQueryPort;
+import ${package}.framework.consumer.application.port.out.SwimRemoteFeatureQueryPort;
 import ${package}.infrastructure.in.rest.dto.SubscriptionRequest;
 import ${package}.infrastructure.in.rest.dto.SubscriptionResponse;
-import com.github.swim_developer.framework.consumer.infrastructure.out.client.AbstractSubscriptionManagerClientRegistry;
-import com.github.swim_developer.framework.application.model.ProviderConfiguration;
-import com.github.swim_developer.framework.application.model.SubscriptionStatusUpdate;
+import ${package}.framework.consumer.infrastructure.out.client.AbstractSubscriptionManagerClientRegistry;
+import ${package}.framework.application.model.ProviderConfiguration;
+import ${package}.framework.application.model.SubscriptionStatusUpdate;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
@@ -65,7 +62,6 @@ public class SubscriptionManagerAdapter
                 : "UNKNOWN";
     }
 
-    // TODO: Adapt toRequest for your domain-specific SubscriptionCommand fields
     private static SubscriptionRequest toRequest(SubscriptionCommand command) {
         return new SubscriptionRequest(
                 command.topic(),
@@ -75,12 +71,12 @@ public class SubscriptionManagerAdapter
         );
     }
 
-    // TODO: Adapt fromResponse for your domain-specific Subscription fields
     private static Subscription fromResponse(SubscriptionResponse response, String providerId) {
         Subscription subscription = new Subscription();
         subscription.setSubscriptionId(response.subscriptionId());
         subscription.setQueueName(response.queueName());
         subscription.setSubscriptionStatus(response.subscriptionStatus());
+        subscription.setSubscriptionEnd(response.subscriptionEnd());
         subscription.setProviderId(providerId);
         return subscription;
     }

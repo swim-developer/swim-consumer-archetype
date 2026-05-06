@@ -1,6 +1,3 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.application.usecase;
 
 import ${package}.domain.model.Subscription;
@@ -8,13 +5,13 @@ import ${package}.domain.model.command.SubscriptionCommand;
 import ${package}.application.port.in.ManageSubscriptionPort;
 import ${package}.application.port.out.RemoteSubscriptionManagerPort;
 import ${package}.application.port.out.SubscriptionStore;
-import com.github.swim_developer.framework.domain.exception.SubscriptionNotFoundException;
-import com.github.swim_developer.framework.consumer.application.subscription.service.AbstractSubscriptionService;
-import com.github.swim_developer.framework.domain.model.SubscriptionStatus;
-import com.github.swim_developer.framework.application.port.out.SwimConsumerManagerPort;
-import com.github.swim_developer.framework.application.port.out.SwimProviderConfigPort;
-import com.github.swim_developer.framework.application.port.out.SwimSubscriptionFilterPort;
-import com.github.swim_developer.framework.application.model.ProviderConfiguration;
+import ${package}.framework.domain.exception.SubscriptionNotFoundException;
+import ${package}.framework.consumer.application.subscription.service.AbstractSubscriptionService;
+import ${package}.framework.domain.model.SubscriptionStatus;
+import ${package}.framework.application.port.out.SwimConsumerManagerPort;
+import ${package}.framework.application.port.out.SwimProviderConfigPort;
+import ${package}.framework.application.port.out.SwimSubscriptionFilterPort;
+import ${package}.framework.application.model.ProviderConfiguration;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
@@ -23,8 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.Optional;
 
-import static com.github.swim_developer.framework.domain.model.SubscriptionType.DECLARED;
-import static com.github.swim_developer.framework.domain.model.SubscriptionType.ON_DEMAND;
+import static ${package}.framework.domain.model.SubscriptionType.DECLARED;
+import static ${package}.framework.domain.model.SubscriptionType.ON_DEMAND;
 
 @Slf4j
 @ApplicationScoped
@@ -190,7 +187,9 @@ public class SubscriptionUseCase extends AbstractSubscriptionService<Subscriptio
                 subscription.getTopic(),
                 null,
                 subscription.getProviderId(),
-                subscription.getDescription()
+                subscription.getDescription(),
+                subscription.getMessageTypes() != null ? subscription.getMessageTypes() : List.of(),
+                subscription.getAerodromes() != null ? subscription.getAerodromes() : List.of()
         ));
     }
 

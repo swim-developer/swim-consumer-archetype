@@ -1,13 +1,10 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
 package ${package}.infrastructure.out.client;
 
 import ${package}.infrastructure.in.rest.dto.SubscriptionRequest;
 import ${package}.infrastructure.in.rest.dto.SubscriptionResponse;
 import ${package}.infrastructure.in.rest.dto.TopicDetailsResponse;
-import com.github.swim_developer.framework.application.model.SubscriptionStatusUpdate;
-import com.github.swim_developer.framework.infrastructure.in.rest.TopicsListResponse;
+import ${package}.framework.application.model.SubscriptionStatusUpdate;
+import ${package}.framework.infrastructure.in.rest.TopicsListResponse;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.faulttolerance.Retry;
