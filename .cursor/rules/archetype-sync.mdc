@@ -1,0 +1,49 @@
+---
+description: Keep swim-consumer-archetype and swim-provider-archetype in sync with project changes
+alwaysApply: false
+---
+
+# Archetype Sync Rule
+
+When modifying **any** consumer or provider project, check whether the change affects a class that also exists as a template in the corresponding archetype.
+
+> All projects are independent repos at `/Users/marcelosales/Development/swim/`. This rule applies regardless of which workspace is open.
+
+## Scope
+
+| Project modified | Archetype to check |
+|---|---|
+| `swim-digital-notam-consumer`, `swim-ed254-consumer`, `swim-ffice-consumer` | `../swim-consumer-archetype/` |
+| `swim-digital-notam-provider`, `swim-ed254-provider`, `swim-ffice-provider` | `../swim-provider-archetype/` |
+
+## Where the archetype templates live
+
+```
+/Users/marcelosales/Development/swim/swim-consumer-archetype/src/main/resources/archetype-resources/
+  src/main/java/          # Consumer Java templates (Velocity)
+  src/main/resources/     # Consumer application.properties template
+
+/Users/marcelosales/Development/swim/swim-provider-archetype/src/main/resources/archetype-resources/
+  src/main/java/          # Provider Java templates (Velocity)
+  src/main/resources/     # Provider application.properties template
+```
+
+## What to check
+
+1. **Structural changes**: New/deleted/renamed classes, moved packages
+2. **Interface changes**: New methods in port interfaces, changed signatures
+3. **Pattern changes**: New SPIs, new annotations, constructor changes
+4. **Configuration changes**: New properties in `application.properties`, new Kafka/AMQP channels
+
+## What to do
+
+- **Mechanical/infrastructure classes** (REST, persistence, messaging, adapters, subscription): update archetype template
+- **Domain-specific classes** (EventExtractor, EventData, FilterDimension): no archetype update needed (those are stubs)
+- After updating:
+  - Consumer: `cd /Users/marcelosales/Development/swim/swim-consumer-archetype && mvn clean install`
+  - Provider: `cd /Users/marcelosales/Development/swim/swim-provider-archetype && mvn clean install`
+- Use `${serviceName}`, `${package}`, etc. for parameterized values
+
+## STOP and ASK the user
+
+If unsure whether a project change should propagate to the archetype, STOP and ask before proceeding.

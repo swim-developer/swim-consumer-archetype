@@ -1,0 +1,477 @@
+---
+alwaysApply: true
+---
+
+# SESAR CP1 (Common Project 1) - SWIM Deployment
+
+## Overview
+
+**CP1 (Common Project 1)** is the European Union's mandated deployment program for SWIM (System Wide Information Management) infrastructure and services, defined in **EU Regulation 116/2021**. It represents the first phase of the SESAR (Single European Sky ATM Research) deployment program.
+
+## Regulatory Framework
+
+### Single European Sky (SES)
+
+**Objectives**:
+- Safety improvement
+- Environmental sustainability
+- Airspace organization and use optimization
+- Interoperability of European ATM network
+- Performance-based mechanisms
+
+**SES 2+** enables:
+- Cross-border cooperation
+- Consolidation of ATM functions
+- Reduction of fragmentation
+- Standardized information exchange
+
+### EU Regulation 116/2021
+
+**Key Provisions**:
+- Definition of Common Projects
+- Governance framework
+- Implementation timelines
+- Stakeholder responsibilities
+- Compliance assessment mechanisms
+
+**Mandate**: **2026 implementation deadline** for CP1 services
+
+### EASA Rulemaking
+
+**Role**: European Union Aviation Safety Agency
+- Standardization of ATM systems
+- Safety regulations
+- Equipment certification
+- Operational procedures
+
+**Relevant Regulation**: DS.GE (2013/1768) for Extended AMAN and other CP1 functionalities
+
+## SESAR Ecosystem
+
+### SESAR 3 Joint Undertaking
+
+**Purpose**: Research and Development
+- Technological advances
+- Industrial complement to SES legislation
+- ATM Master Plan development
+- Innovation pipeline
+
+### SESAR Deployment Manager
+
+**Role**: Deployment coordination and monitoring
+- Common Projects implementation oversight
+- Deployment Programme management
+- Stakeholder coordination
+- Progress monitoring and reporting
+
+**Established**: June 2022
+
+**Coordinator**: EUROCONTROL Network Manager (ECTL NM)
+
+### European ATM Master Plan
+
+**Purpose**: Strategic roadmap for ATM modernization
+- Technology evolution
+- Operational improvements
+- Infrastructure development
+- Deployment priorities
+
+## CP1 Implementation Status
+
+### Deployment Statistics (as of documentation date)
+
+- **CP1 Already Deployed**: Significant percentage of stakeholders
+- **CP1 Not Planned**: 1% of stakeholders
+- **CEF Support**: Co-financing available for implementation
+
+### Funding
+
+**CEF (Connecting Europe Facility)**:
+- EU co-financing mechanism
+- Support for infrastructure deployment
+- Reduces financial burden on stakeholders
+
+**BCR (Benefit-Cost Ratio)**:
+- Profitability analysis required
+- BCR > 1 indicates positive return
+- Timeframe-based evaluation
+
+## AF5 (ATM Functionality 5) Deployment Families
+
+CP1 is organized into deployment families under AF5:
+
+### Family 5.2.1 - SWIM PKI and Cyber Security
+
+**Requirements**:
+- Information Security Management System (ISMS)
+- Digital Certificate management
+- Cyber security monitoring and control
+
+**Capabilities** (for all stakeholders):
+- **Monitor**: Continuous security monitoring
+- **Detect**: Threat and anomaly detection
+- **Analyse**: Security event analysis
+- **Respond**: Incident response procedures
+- **Recover**: Recovery from cyber events
+
+**Scope**: Protection of systems and services using Digital Certificates
+
+**For Service Consumers**:
+- ISMS covering Digital Certificate usage
+- Certificate lifecycle management
+- Secure key storage
+
+### Family 5.3.1 - Aeronautical Information Exchanges
+
+**Services**:
+1. **AIFS** (Aeronautical Information Flight Service)
+2. **AMAP** (Aerodrome Mapping)
+3. **DNOTAM** (Digital NOTAM)
+
+**Communication Protocols**:
+- **Legacy**: AFTN/AMHS (being phased out)
+- **Modern**: SWIM (IP-based network)
+- **Security**: EACP (European Aviation Common PKI)
+
+## AIM (Aeronautical Information Management) CP1 Services
+
+### AIFS (Aeronautical Information Flight Service)
+
+**Purpose**: Provide baseline static aeronautical information
+
+**Requirements**:
+- **AIFS-101**: AISP provision (required)
+- **AIFS-102**: ANSP consumption (required)
+- **AIFS-103**: EAD integration (required)
+- **AIFS-104**: Extended scope (optional)
+
+**Data Scope Clarifications**:
+- **AIFS-101-1**: Basic aerodrome data (required)
+- **AIFS-101-2**: Runway/taxiway data (required)
+- **AIFS-101-3**: 18 CP1 Airports (required)
+- **AIFS-101-4**: All IFR Airports (recommended)
+- **AIFS-101-5**: Extended features (optional)
+
+**Compliance**: Minimum 1 use case and system consuming/using data
+
+### AMAP (Aerodrome Mapping)
+
+**Purpose**: Provide aerodrome mapping data for electronic charts
+
+**Requirements**:
+- **AMAP-101**: CP1 Airports provision (required)
+- **AMAP-102**: IFR Airports provision (optional)
+- **AMAP-103**: AISP provision (required)
+- **AMAP-104**: ANSP consumption (required)
+- **AMAP-105**: AO (Airport Operator) provision (optional)
+
+**Data Scope**:
+- **Temporality**: Current and Next AIRAC cycle
+- **Geographical Scope**: CP1 Mandated airports (18 airports)
+- **Usage**: Enabling ePIB (Electronic Pre-flight Information Bulletin)
+
+**Note**: Depending on local agreements, AMAP can be provided by ANSP and/or Airport Operator
+
+**Compliance**: No consumption mandated (unlike DNOTAM)
+
+### DNOTAM (Digital NOTAM)
+
+**Purpose**: Digital replacement of traditional text-based NOTAMs
+
+**Requirements**:
+- **DNOT-102**: AISP provision (required)
+- **DNOT-103**: ANSP consumption (required)
+- **DNOT-105**: Data quality assurance (required)
+- **DNOT-106**: Extended scope (optional)
+
+**Compliance**: Minimum 1 use case implementation
+
+**EASA Interpretation**:
+> "A full replacement of current NOTAM concept"
+
+**Specification**: SWIM Registry Service Definition + EUROCONTROL SPEC-170 (Yellow Profile)
+
+**Service Definition**: https://eur-registry.swim.aero/services/eurocontrol-digital-notam-subscription-and-request-service-010000
+
+**Note**: ED-254 is for Extended AMAN only, NOT for DNOTAM.
+
+See `swim-dnotam-ed254.mdc` for detailed DNOTAM documentation.
+
+## Stakeholder Roles and Responsibilities
+
+### AISP (Aeronautical Information Service Provider)
+
+**Responsibilities**:
+- Provide AIFS, AMAP, and DNOTAM services
+- Ensure data quality and validation
+- Maintain AIRAC cycle compliance
+- Publish information via SWIM
+
+**Mandated Services**:
+- AIFS (required)
+- AMAP (required for CP1 airports)
+- DNOTAM (required)
+
+### ANSP (Air Navigation Service Provider)
+
+**Responsibilities**:
+- Consume AIFS, AMAP, and DNOTAM services
+- Integrate into ATM systems
+- Ensure operational use of information
+- Minimum 1 use case per service
+
+**Mandated Consumption**:
+- AIFS (required)
+- AMAP (required)
+- DNOTAM (required)
+
+### AO (Airport Operator)
+
+**Responsibilities**:
+- Optionally provide AMAP data
+- Coordinate with AISP/ANSP
+- Local agreements for data provision
+
+**Mandated Services**: None (optional participation)
+
+### EAD (European AIS Database)
+
+**Role**: Central repository operated by EUROCONTROL
+- Aggregation of aeronautical information
+- Distribution to stakeholders
+- Quality assurance
+- AIRAC cycle management
+
+**Official Status**: "Given" to EUROCONTROL
+
+### CAA (Civil Aviation Authority)
+
+**Responsibilities**:
+- National oversight
+- Compliance monitoring
+- Certification
+- Enforcement
+
+**Note**: Country-level responsibility for CP1 compliance
+
+## CP1 Mandated Airports
+
+**18 CP1 Airports** (specific list in regulation):
+- High-traffic European airports
+- Strategic importance
+- Initial deployment scope
+- Expansion to IFR airports recommended
+
+**IFR Airports**:
+- Broader scope beyond CP1 list
+- Recommended for AIFS-101-4
+- Optional for AMAP-102
+
+## SWIM Requirements for CP1
+
+### Network Infrastructure
+
+**Transition**:
+- **From**: AFTN/AMHS (circuit-switched)
+- **To**: SWIM (IP-based network)
+
+**Benefits**:
+- Higher bandwidth
+- Lower latency
+- Modern protocols (HTTP/REST, AMQP)
+- Better scalability
+
+### Service Orientation
+
+**Principles**:
+- Service-based architecture
+- Standardized interfaces
+- Interoperability
+- Reusability
+
+**SESAR R&D Contributions**:
+- WP 8: Service orientation to information exchange
+- WP 14: Technical interfaces for information services
+
+### Security (EACP)
+
+**European Aviation Common PKI**:
+- Certificate-based authentication
+- mTLS for service-to-service communication
+- Trust framework
+- Certificate lifecycle management
+
+**Requirement**: All CP1 services must use EACP certificates
+
+## ATM Systems Impact
+
+### System Definition
+
+**CP1 Mandate**:
+> "ATM systems = All systems using AIM information"
+
+**Implication**: Any system consuming aeronautical information must support CP1 services
+
+### Use of Information
+
+**Requirement**: ATM systems must have **capacity to use** CP1 information
+
+**Not Just Consumption**: Systems must operationally utilize the data, not just receive it
+
+### Integration Challenges
+
+**Legacy Systems**:
+- AFTN/AMHS still in use
+- Parallel operation during transition
+- Migration complexity
+
+**Example**: LARA V5 does not support DNOTAM (upgrade required)
+
+## Compliance Assessment
+
+### Monitoring Approach
+
+**SESAR Deployment Manager** monitors:
+- Implementation progress
+- Service availability
+- Data quality
+- Stakeholder compliance
+
+**PMO (Project Management Office) Approach**:
+- Structured project management
+- Milestone tracking
+- Risk management
+- Reporting framework
+
+### Compliance Criteria
+
+**For Service Providers (AISP)**:
+1. Service availability (uptime)
+2. Data quality metrics
+3. AIRAC cycle compliance
+4. Interface conformance (SWIM-TI Yellow Profile)
+
+**For Service Consumers (ANSP)**:
+1. Minimum 1 use case implemented
+2. Operational integration
+3. System capacity to use data
+4. Evidence of consumption
+
+### Reporting
+
+**Stakeholders must provide**:
+- Implementation status
+- Deployment timeline
+- Compliance evidence
+- Deviation justifications
+
+## Harmonization
+
+### CP1 System Requirements
+
+**Harmonized Specifications**:
+- SWIM Specifications (SWIM-TI Yellow Profile - EUROCONTROL SPEC-170)
+- DNOTAM Service Definition (SWIM Registry)
+- AIFS/AMAP Service Definitions
+
+**Status**: Some specifications not yet published (ongoing work)
+
+### Cross-Border Cooperation
+
+**SES 2+ Enablement**:
+- ANSPs collaborate across borders
+- Consolidation of functions
+- Shared services
+- Reduced duplication
+
+**Example**: Multi-national AMAN (Arrival Manager) services
+
+## Deployment Programme Structure
+
+### SESAR Deployment and Infrastructure Partnership
+
+**Established**: June 2022
+
+**Members**:
+- EUROCONTROL Network Manager (Coordinator)
+- ANSPs
+- AISPs
+- Airport Operators
+- Industry partners
+
+**Purpose**:
+- Coordinate deployment
+- Share best practices
+- Resolve implementation issues
+- Monitor progress
+
+### Deployment Phases
+
+1. **Planning**: 2021-2023
+2. **Implementation**: 2023-2026
+3. **Full Operation**: 2026+
+
+**Critical Milestone**: 2026 mandatory compliance date
+
+## Key Takeaways
+
+### For Implementation
+
+1. **Mandatory Services**: AIFS, AMAP, DNOTAM
+2. **Deadline**: 2026
+3. **Minimum Compliance**: 1 use case per service
+4. **Security**: EACP PKI mandatory
+5. **Protocols**: SWIM-TI Yellow Profile (HTTP/REST + AMQP)
+
+### For ANSPs
+
+- Must consume all three CP1 AIM services
+- Integration into ATM systems required
+- Operational use of data (not just reception)
+- Country-level responsibility
+
+### For AISPs
+
+- Must provide all three CP1 AIM services
+- Data quality and validation critical
+- AIRAC cycle compliance
+- SWIM interface conformance
+
+### For Technology Partners (Red Hat)
+
+- **Opportunity**: Enable CP1 compliance through SWIM platform
+- **Value Proposition**: Simplify complexity, avoid vendor lock-in
+- **Differentiator**: Cloud-native, operator-driven deployment
+- **Target**: ANSPs with limited IT resources
+
+## References
+
+- **EU Regulation 116/2021**: Common Project 1 definition
+- **EASA DS.GE (2013/1768)**: Equipment and operational requirements
+- **SWIM Registry Service Definition**: Digital NOTAM specification
+- **EUROCAE ED-254**: Extended AMAN specification (NOT for DNOTAM)
+- **SWIM-TI Yellow Profile**: Service interface bindings (EUROCONTROL SPEC-170)
+- **European ATM Master Plan**: Strategic roadmap
+
+## Glossary
+
+- **CP1**: Common Project 1
+- **SESAR**: Single European Sky ATM Research
+- **SES**: Single European Sky
+- **AF5**: ATM Functionality 5
+- **AISP**: Aeronautical Information Service Provider
+- **ANSP**: Air Navigation Service Provider
+- **AO**: Airport Operator
+- **EAD**: European AIS Database
+- **CAA**: Civil Aviation Authority
+- **EACP**: European Aviation Common PKI
+- **AIFS**: Aeronautical Information Flight Service
+- **AMAP**: Aerodrome Mapping
+- **DNOTAM**: Digital NOTAM
+- **ePIB**: Electronic Pre-flight Information Bulletin
+- **AIRAC**: Aeronautical Information Regulation And Control
+- **AFTN**: Aeronautical Fixed Telecommunication Network
+- **AMHS**: ATS Message Handling System
+- **CEF**: Connecting Europe Facility
+- **BCR**: Benefit-Cost Ratio
+- **PMO**: Project Management Office

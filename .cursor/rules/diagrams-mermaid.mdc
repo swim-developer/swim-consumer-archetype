@@ -1,0 +1,40 @@
+---
+description: Diagrams in READMEs must use Mermaid. SVG and inline images are forbidden for diagrams.
+alwaysApply: true
+---
+
+# Diagrams — Mermaid Only
+
+## Rule
+
+**NEVER use SVG files or `![img](*.svg)` references in README files for diagrams.**
+
+**ALWAYS use Mermaid code blocks** (` ```mermaid `) for any diagram.
+
+## What is a diagram
+
+A diagram shows **relationships, flow, or hierarchy** with arrows or connections between elements. Examples: architecture diagrams, data flows, dependency trees, sequence diagrams.
+
+A **catalog of boxes without connections** (a list of items with colors) is NOT a diagram — use a table or bullet list instead.
+
+## Clean commit
+
+When the user says **"commit limpo"**, it means:
+1. Erase all git history (orphan branch technique)
+2. Single commit with the exact message: `First flight — SWIM CP1 open-source reference architecture`
+3. Force push to GitHub
+4. Use `git commit-tree` (never `git commit`) to guarantee no Co-authored-by trailer is injected
+
+## Examples
+
+```markdown
+❌ WRONG
+![Architecture](docs/architecture.svg)
+
+✅ CORRECT
+```mermaid
+flowchart LR
+    A[AIXM XSD] -->|generate-sources| B[JAXB / XJC]
+    B --> C[SWIM Service]
+```
+```

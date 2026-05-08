@@ -1,0 +1,126 @@
+---
+alwaysApply: true
+---
+
+**SWIM IMPLEMENTATION CONTEXT FILE FOR RED HAT REFERENCE ARCHITECTURE**
+
+**1. PROJECT OVERVIEW AND STRATEGIC GOAL**
+
+The primary objective is to develop a standardized, repeatable Reference Architecture for the implementation of **SWIM (System Wide Information Management)** services within the Red Hat ecosystem. This initiative aims to address the global **ICAO** mandate, which requires the aviation sector (ANSPs worldwide) to adopt standardized, service-oriented data exchange by 2026.
+
+The strategic goal is to position **Red Hat** as the essential technology partner that enables this transformation. This involves offering a **Cloud-Native, Open Source** platform that directly counters the traditional reliance on proprietary vendors and subsequent **vendor lock-in**—a central paradox highlighted by the **SESAR** modernization efforts.
+
+**2. MARKET PAIN POINTS AND TECHNICAL CHALLENGES**
+
+The target audience consists mainly of operational experts with limited internal **IT/Cloud-Native** development teams. The key challenges to overcome are:
+
+* **Complexity Abstraction:** The need to deploy complex systems (messaging, security, integration) simply, as the customers lack the specialized expertise to manage Kubernetes or configure complex middleware directly.
+* **Security:** High-assurance security is mandatory, requiring **Mutual TLS (mTLS)** for service-to-service communication. This relies on the provisioning and management of certificates issued by the **EACP (European Aviation Common PKI)**.
+* **Integration:** SWIM is fundamentally an **ETL (Extract, Transform, Load)** challenge, requiring the ability to consume/expose data via both **REST/APIs** and **AMQP/JMS** protocols, often involving complex **XML/XSD** data model transformations.
+* **Auditability:** All transactions and events must be persisted for auditing purposes.
+
+**3. ARCHITECTURE AND TECHNOLOGY STACK**
+
+The reference architecture centers on the **Red Hat Application Foundations (RHAF)** portfolio running on **OpenShift**:
+
+* **Core Platform:** Red Hat OpenShift Container Platform.
+* **Integration Engine:** **Quarkus** with custom `swim-framework` (swim-framework-core, swim-framework-consumer, swim-framework-provider). MicroProfile REST Client for HTTP, Quarkus AMQP for messaging, JAX-RS for REST APIs.
+* **Messaging:** **ActiveMQ Artemis (Red Hat AMQ)** is required for the AMQP (Publish/Subscribe) pattern mandated by the SWIM Yellow Profile.
+* **Security/PKI:** **Kubernetes Secrets** are used to securely store and inject the EACP certificates and private keys necessary for establishing mTLS connections.
+* **Data Persistence:** PostgreSQL is used to store audited events from the consumer services.
+
+**4. IMPLEMENTATION GOAL: DNOTAM OPERATOR**
+
+The final implementation goal is to create a fully automated deployment solution for the **DNOTAM (Digital Notam)** service:
+
+1.  **Service Definition:** Develop DNOTAM Provider and Consumer applications using Quarkus with `swim-framework`.
+2.  **Deployment Packaging:** Create a modular **Helm Chart** that defines the full application stack, including the Quarkus application (Deployment), ActiveMQ (Deployment/StatefulSet), and PostgreSQL (StatefulSet/Operator reference). The Helm Chart must conditionally deploy components based on the required role (`Provider`, `Consumer`, or `Both`).
+3.  **Automation:** The ultimate goal is to wrap the modular Helm Chart into a **Kubernetes Operator** (using the Helm Operator pattern). This operator will manage the entire lifecycle of the DNOTAM service.
+4.  **Simplification:** The user will deploy the DNOTAM service by creating a single Custom Resource (DNOTAM CRD instance), effectively abstracting all underlying technical complexity (ActiveMQ configuration, mTLS secret injection, persistence volume claims) into a simplified, repeatable, and enterprise-managed asset.
+
+**5. REFERENCE IMPLEMENTATION: DNOTAM CONSUMER**
+
+**Role**: Air Navigation Service Provider (ANSP)
+- Air traffic control
+- Airspace management
+- Navigation services
+
+**Project Scope**: DNOTAM CONSUMER ONLY (not publisher)
+
+**ANSP Consumer Requirements**:
+- Consume DNOTAM events from AISP via AMQP
+- Process AIXM 5.1.1 formatted events (XML)
+- Integrate into existing ATM systems
+- Persist events for audit (CP1 compliance requirement)
+- Implement minimum 1 CP1 use case (example: Runway Closure)
+
+**Out of Scope for ANSP Consumer**:
+- DNOTAM Publisher (AISP responsibility)
+- Subscription Manager (use existing infrastructure)
+- AIFS/AMAP provider (consume from AISP)
+
+**Technical Implementation Focus**:
+- Quarkus AMQP consumer (swim-framework-consumer)
+- AIXM 5.1.1 XML parsing (DNOTAM events)
+- MongoDB persistence for audit
+- EACP certificate management (mTLS)
+- OpenShift/Kubernetes deployment via Operator
+
+**Out of Scope**: How airports notify AISP (outside SWIM specification)
+
+**6. CONSUMER ↔ PROVIDER CONNECTIVITY — ABSOLUTE RULE**
+
+**A Consumer NEVER connects to the Provider of the same module. NEVER.**
+
+The "provider" from a Consumer's perspective is ALWAYS a **Consumer Validator** (which simulates/validates the provider role).
+
+| Consumer | Connects to (its "provider") |
+|---|---|
+| `swim-dnotam-consumer` | `dnotam-consumer-validator` (Artemis + Subscription Manager) |
+| `swim-ed254-consumer` | `ed254-consumer-validator` (Artemis + Subscription Manager) |
+
+**Why**: The Consumer Validator deploys its own Artemis + mock Subscription Manager API, simulating what a real EUROCONTROL/AISP provider would expose. The actual Provider (`swim-dnotam-provider`, `swim-ed254-provider`) is a completely separate service that publishes to its OWN Artemis for real downstream consumers — it is NOT what our Consumer connects to during development/testing.
+
+**In practice**: When creating a Consumer sample/CR, the `amqpBrokerHost` and `subscriptionManager.url` (or `swimServiceBaseURL`) MUST point to the **consumer-validator** endpoints, NOT to the provider endpoints.
+
+**7. OPERATOR ARCHITECTURE RULES**
+
+**Artemis Ownership**:
+- Each service (DNOTAM Provider, ED-254 Provider, etc.) owns its own Artemis instance
+- The DNOTAM Consumer has ZERO relationship with the Provider's Artemis
+- Artemis naming must derive from `cr.Name` (e.g., `{cr.Name}-artemis`) for the DNOTAM Provider
+- The Consumer connects to external AMQP brokers configured in its `providers` spec — it does NOT manage any Artemis
+
+**ED-254 Provider (Future)**:
+- Will have its own independent Artemis
+- Will support option to reuse an existing Artemis OR create its own
+- Do NOT modify ED-254 files until explicitly requested
+
+**Kafka Topics Ownership**:
+- Domain-specific Kafka topics (closure, surface, airspace, restriction, hazards, others) belong to the Consumer, NOT the Provider
+- The Provider creates only `dnotam-events-all-topic` (input) and `dnotam-events-dlq-topic` (dead letter)
+- The Consumer categorizes events received via AMQP and publishes to the domain-specific Kafka topics
+
+**Scope Discipline**:
+- NEVER modify files outside the scope of the current task (e.g., do NOT touch ED-254 when working on DNOTAM)
+- NEVER modify consumer files when the task is about the provider, and vice-versa
+- NEVER modify shared utility files unless explicitly confirmed by the user
+
+**Testing Environment**: OpenShift cluster at https://console-openshift-console.apps.ocp4.masales.cloud/
+- Base domain: `*.apps.ocp4.masales.cloud`
+- PKI: cert-manager with Let's Encrypt (server certs) + SWIM Internal CA (client certs)
+- mTLS configuration for service-to-service authentication
+- Setup documented in: openshift-swim-setup.mdc
+
+**8. CANONICAL BOOKS — Architecture Authority**
+
+All architecture decisions, refactors, module boundaries, and dependency direction MUST align with these four books (used together, not cherry-picked):
+
+| # | Book | File in repo |
+|---|------|------|
+| 1 | *Designing Hexagonal Architecture with Java* — Davi Vieira | `books/pdf/DESIGNING_HEXAGONAL_ARCHITECTURE_WITH_JAVA.pdf` |
+| 2 | *Microservices Design Patterns with Java* — Sergey Seroukhov | `books/pdf/Microservices Design Patterns with Java...pdf` |
+| 3 | *Quarkus in Action* — Martin Štefanko & Jan Martiška | `books/pdf/Quarkus-in-Action-Red-Hat-Developer-ebook-final.pdf` |
+| 4 | *The C4 model for visualising software architecture* | `books/pdf/The C4 model for visualising software architecture.pdf` |
+
+When a task touches ports/adapters, microservice patterns, Quarkus idioms, or C4 notation — load the relevant PDF and apply that guidance to this codebase. Do NOT reproduce long excerpts; apply the concepts.

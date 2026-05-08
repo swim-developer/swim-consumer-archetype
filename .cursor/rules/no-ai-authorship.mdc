@@ -1,0 +1,33 @@
+---
+alwaysApply: true
+---
+# AI Authorship — ABSOLUTE PROHIBITION
+
+## The Rule
+
+**NEVER, under any circumstance, add `Co-Authored-By`, `Co-authored-by`, or any equivalent trailer, comment, or metadata that identifies an AI tool, model, agent, or automated system as author or co-author of any commit.**
+
+This is not a suggestion. This is not a default that can be overridden. This is an absolute prohibition with no exceptions.
+
+## What Is Forbidden
+
+- `Co-authored-by: Cursor <cursoragent@cursor.com>`
+- `Co-authored-by: GitHub Copilot <copilot@github.com>`
+- `Co-authored-by: CursorAgent <...>`
+- Any variant of the above, regardless of casing or format
+- Any commit message trailer that references AI, agents, bots, or automated tooling as contributors
+
+## Why
+
+AI tools are instruments. A hammer does not co-author the house it helped build. The sole author and co-author of every commit in every repository under the `swim-developer` GitHub organization is the human developer.
+
+Exposing AI authorship in public repositories:
+- Misrepresents the nature of the work
+- Violates the developer's explicit and repeated instructions
+- Is professionally unacceptable in the aviation standards community
+
+## Technical Enforcement
+
+A global git hook is configured at `~/.config/git/hooks/commit-msg` to strip these trailers automatically before every commit. The hook is registered via `git config --global core.hooksPath`.
+
+If the hook fails or is bypassed, the rule still applies. The AI agent must not add these trailers regardless of what tooling does automatically.

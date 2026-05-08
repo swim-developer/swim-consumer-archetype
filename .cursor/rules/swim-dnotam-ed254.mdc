@@ -1,0 +1,447 @@
+---
+alwaysApply: true
+---
+
+# DNOTAM (Digital NOTAM) - Service Specification
+
+## Important Clarification
+
+> **CORRECTION (January 2026)**: This document was updated to correct an error regarding ED-254.
+> 
+> **ED-254 (EUROCAE) is specifically for Extended AMAN (Arrival Sequence Service), NOT for DNOTAM.**
+> 
+> For DNOTAM, there is **no formal service standard/specification** like ED-254. Instead, DNOTAM uses:
+> 1. **Service Definition** published on the SWIM Registry
+> 2. **SWIM-TI Yellow Profile** (EUROCONTROL SPEC-170) for protocol requirements
+
+## DNOTAM Service Definition
+
+**Official Source**: SWIM Registry
+
+**URL**: https://eur-registry.swim.aero/services/eurocontrol-digital-notam-subscription-and-request-service-010000
+
+**What the Service Definition provides**:
+- Service description and scope
+- Subscription interface specification
+- Request interface specification (WFS GetFeature)
+- Payload schema requirements
+- Operational parameters
+
+**Protocol requirements come from**: EUROCONTROL SPEC-170 (Yellow Profile)
+- AMQP 1.0 over TLS 1.2/1.3 for Publish/Subscribe
+- REST/HTTP over TLS 1.2/1.3 for Request/Reply
+- mTLS authentication requirements
+- Security and audit requirements
+
+## DNOTAM Overview
+
+**Digital NOTAM (DNOTAM)** is the digital replacement of traditional text-based NOTAMs (Notice to Airmen). It provides system-readable, validated aeronautical information about operational changes affecting flight operations.
+
+**Data Model**: AIXM 5.1.1 + Event Schema
+
+## Current NOTAM vs Digital NOTAM
+
+### Current NOTAM Limitations
+
+**Example**: `A1926/21 NOTAMN`
+```
+Q) EHAA/QMRLC/IV/NBO/A/000/999/5218N00446E005
+A) EHAM
+B) 2109060500
+C) 2109150500
+E) RWY 09/27 CLSD
+```
+
+**Problems**:
+- ❌ Only human readable (personalized item E)
+- ❌ Space for errors
+- ❌ No visual representation
+- ❌ Hard to read and understand
+- ❌ Difficult to keep overview
+- ❌ No machine validation
+
+### Digital NOTAM Benefits
+
+- ✅ **System readable**: Machine-parseable structured data
+- ✅ **Data validation**: Automated validation against schemas
+- ✅ **Traceable associations**: Linked to related aeronautical features
+- ✅ **Export capability**: Can be exported as Digital NOTAM dataset
+- ✅ **AIXM-based**: Uses standardized Aeronautical Information Exchange Model
+- ✅ **Visual representation**: Can be displayed on maps/charts
+
+## Supported DNOTAM Event Types
+
+### Mandatory Event Scenarios
+
+1. **Runway Closure (RWY.CLS)**
+   - Temporary or permanent closure of runways
+   - Affects take-off and landing operations
+
+2. **Taxiway Closure (TWY.CLS)**
+   - Closure of taxiways affecting ground movement
+   - Impacts taxi routes and airport capacity
+
+3. **Stand Status**
+   - Aircraft stand availability changes
+   - Parking position status updates
+
+4. **Obstacle New (OBS.NEW)**
+   - New obstacles affecting flight operations
+   - Temporary or permanent obstructions
+
+5. **Navaid Unserviceable (NAV.UNS)**
+   - Navigation aid equipment failures
+   - VOR, DME, ILS, NDB unavailability
+
+6. **ATS Airspace Activation (SAA.ACT)**
+   - Activation/deactivation of airspace
+   - Restricted areas, danger zones, military areas
+
+## Mandatory Use Cases
+
+### Required for IFR Airports
+
+1. **ePIB (Electronic Pre-flight Information Bulletin)**
+   - Status: **REQUIRED**
+   - Scope: All IFR airports
+   - Purpose: Provide digital briefing information
+
+2. **Take-off Landing**
+   - Status: **REQUIRED**
+   - Scope: All IFR airports
+   - Purpose: Runway and approach information
+
+3. **Runway Contamination (SFC.CON)**
+   - Status: **REQUIRED**
+   - Scope: All IFR airports
+   - Purpose: Surface condition reporting
+
+4. **Airspace Status VFR**
+   - Status: **REQUIRED**
+   - Purpose: VFR airspace availability
+
+### Recommended
+
+- **ePIB for CP1 Airports**: Recommended but not mandatory
+
+## Service Interfaces (from Yellow Profile)
+
+**Note**: Interface requirements are defined by EUROCONTROL SPEC-170 (Yellow Profile), which applies to ALL SWIM services including DNOTAM.
+
+### Subscription Interface (REST/HTTP)
+
+**Protocol**: REST/HTTP over TLS 1.2/1.3
+
+**Endpoints** (as per SWIM Registry Service Definition):
+- `POST /swim/v1/subscriptions` - Create subscription
+- `GET /swim/v1/subscriptions/{id}` - Get subscription details
+- `PUT /swim/v1/subscriptions/{id}` - Update subscription (ACTIVE/PAUSED)
+- `DELETE /swim/v1/subscriptions/{id}` - Delete subscription
+- `GET /swim/v1/topics` - List available topics
+
+### Request Interface (WFS)
+
+**Protocol**: REST/HTTP over TLS 1.2/1.3
+
+**Endpoints**:
+- `GET /swim/v1/features` - WFS GetFeature for AIXM data
+
+### Event Streaming Interface (AMQP)
+
+**Protocol**: AMQP 1.0 over TLS 1.2/1.3
+
+**Operations**:
+- Subscribe to topics
+- Receive real-time DNOTAM event notifications
+- Queue management
+
+**Reference**: EUROCONTROL SPEC-170 (Yellow Profile)
+
+## CP1 (Common Project 1) Requirements
+
+### Stakeholder Roles
+
+#### AISP (Aeronautical Information Service Provider)
+
+**Requirements**:
+- **DNOT-102**: Provide DNOTAM service
+- **DNOT-105**: Ensure data quality and validation
+- **DNOT-106** (optional): Extended data scope
+
+**Responsibilities**:
+- Publish DNOTAM events
+- Maintain baseline aeronautical information (AIFS)
+- Ensure data consistency with AMAP
+
+#### ANSP (Air Navigation Service Provider)
+
+**Requirements**:
+- **DNOT-103**: Consume DNOTAM service
+- **DNOT-104** (optional): Extended consumption
+
+**Responsibilities**:
+- Subscribe to relevant DNOTAM topics
+- Integrate DNOTAM into ATM systems
+- Minimum 1 use case implementation
+
+#### EAD (European AIS Database)
+
+**Role**: Central repository and distribution point
+
+### Compliance Requirements
+
+**Minimum Compliance**:
+- At least **1 use case** implemented
+- System consuming and using DNOTAM data
+- Integration with existing ATM systems
+
+**EASA Interpretation**:
+> "A full replacement of current NOTAM concept"
+
+## Data Scope and Relationships
+
+### AIFS (Aeronautical Information Flight Service)
+
+DNOTAM events are expressed in relation to **static aeronautical information baseline** provided by AIFS.
+
+**Required AIFS Data Scope** (to support DNOTAM):
+
+| Feature | Requirement | Scope |
+|---------|-------------|-------|
+| AIFS-101-1 | Required | Basic aerodrome data |
+| AIFS-101-2 | Required | Runway/taxiway data |
+| AIFS-101-3 | Required | 18 CP1 Airports |
+| AIFS-101-4 | Recommended | All IFR Airports |
+| AIFS-101-5 | Optional | Extended features |
+
+**Mandatory Data Elements**:
+- `AeronauticalGround`
+- `AircraftStand`
+- `Light`
+- `AirportHeliport`
+
+### AMAP (Aerodrome Mapping)
+
+**Requirements**:
+- **AMAP-101**: CP1 Airports (required)
+- **AMAP-102**: IFR Airports (optional)
+- **AMAP-103**: AISP provision
+- **AMAP-104**: ANSP consumption
+- **AMAP-105**: AO (Airport Operator) provision (optional)
+
+**Data Scope**:
+- **Temporality**: Current and Next AIRAC cycle
+- **Geographical Scope**: CP1 Mandated airports
+- **Usage**: Enabling ePIB (optionally)
+
+**Note**: No consumption mandated for AMAP (unlike DNOTAM)
+
+## Integration with ASM (Airspace Management)
+
+### Regulatory Context
+
+**ICAO Requirement**:
+> "A NOTAM shall be originated and issued concerning information which is of a temporary nature or not sufficiently known in advance"
+
+**Challenge**: If NOTAM not issued, how is General Aviation informed?
+
+### Digital NOTAM and ASM SWIM Service Link
+
+- DNOTAM events can be triggered by ASM changes
+- Airspace activation/deactivation generates DNOTAM
+- Integration between ASM SWIM service and DNOTAM service required
+
+**Current Limitation**:
+- LARA V5 does not support DNOTAM integration
+
+## Technical Implementation
+
+### Service Definition Structure
+
+**Components** (per SWIM Registry Service Definition):
+1. **Service Description Document**
+   - Interface definitions
+   - Payload schemas
+   - Operation specifications
+
+2. **Information Definition**
+   - Event scenarios table
+   - Data model mappings
+   - AIXM feature associations
+
+3. **Interface Specifications**
+   - Subscription API
+   - Request API (WFS GetFeature)
+   - AMQP messaging
+
+### Payload Schemas
+
+**Format**: XML based on AIXM 5.1.1
+
+**Event Structure**:
+```xml
+<Event>
+  <eventType>RunwayClosure</eventType>
+  <featureReference>
+    <AIXM:RunwayDirection gml:id="RWY_09_EHAM"/>
+  </featureReference>
+  <validTime>
+    <beginPosition>2021-09-06T05:00:00Z</beginPosition>
+    <endPosition>2021-09-15T05:00:00Z</endPosition>
+  </validTime>
+  <scenario>CLSD</scenario>
+</Event>
+```
+
+**Key Elements**:
+- `eventType`: Type of DNOTAM event
+- `featureReference`: Link to AIFS baseline feature
+- `validTime`: Event validity period
+- `scenario`: Specific scenario code
+
+### Security Requirements
+
+**PKI (Public Key Infrastructure)**:
+- EACP (European Aviation Common PKI) certificates
+- mTLS for service-to-service communication
+- Certificate-based authentication
+
+**Cyber Security**:
+- Information Security Management System (ISMS)
+- Coverage of Digital Certificate usage
+- Monitor, Detect, Analyze, Respond, Recover capabilities
+
+## Deployment Considerations
+
+### Harmonization Requirements
+
+**CP1 System Requirements**:
+- Harmonized SWIM Specifications
+- SWIM-TI Yellow Profile compliance (EUROCONTROL SPEC-170)
+- SWIM Registry Service Definition conformance
+
+**Status**: Not all specifications published yet (as of documentation date)
+
+### ATM Systems Impact
+
+**CP1 Mandate**:
+> "ATM systems = All systems using AIM information"
+
+**Implication**: All systems consuming aeronautical information must be capable of using DNOTAM
+
+### Migration Strategy
+
+**Transition Period**:
+- Parallel operation of traditional NOTAM and DNOTAM
+- Gradual phase-out of text-based NOTAM
+- Full replacement as per EASA interpretation
+
+**Stakeholder Responsibilities**:
+- Country-level compliance responsibility
+- Stakeholders mandated but implementation is national
+
+## DNOTAM Implementation (RHOne Context)
+
+### Architecture Components
+
+1. **DNOTAM Provider**
+   - Publishes DNOTAM events to AMQP topics
+   - Exposes Subscription Manager REST API
+   - Validates events against AIXM 5.1.1 schemas
+
+2. **DNOTAM Consumer**
+   - Subscribes to DNOTAM AMQP topics
+   - Processes events and updates local systems
+   - Persists events for audit
+
+3. **Integration Layer**
+   - AIFS baseline integration
+   - AMAP data correlation
+   - Event-to-feature association
+
+### Technology Stack (Red Hat)
+
+- **Integration**: Quarkus with swim-framework (swim-framework-consumer / swim-framework-provider)
+- **Broker**: ActiveMQ Artemis (AMQP 1.0)
+- **Database**: PostgreSQL/MongoDB (event persistence)
+- **Platform**: Red Hat OpenShift
+- **Security**: Kubernetes Secrets (EACP certificates)
+
+### Deployment Pattern
+
+**Helm Chart** with conditional components:
+- `mode: provider` - DNOTAM Publisher only
+- `mode: consumer` - DNOTAM Subscriber only
+- `mode: both` - Full bidirectional capability
+
+**Kubernetes Operator**:
+- Single Custom Resource (CR) deployment
+- Automated lifecycle management
+- Complexity abstraction for ANSPs
+
+## Compliance Checklist
+
+### Yellow Profile Conformance (EUROCONTROL SPEC-170)
+
+- [ ] REST/HTTP over TLS 1.2/1.3 implemented
+- [ ] AMQP 1.0 over TLS 1.2/1.3 implemented
+- [ ] mTLS authentication configured
+- [ ] Security requirements met
+- [ ] Audit logging in place
+
+### SWIM Registry Service Definition Conformance
+
+- [ ] Subscription API implemented
+- [ ] Request API (WFS GetFeature) implemented
+- [ ] Payload schemas conform to AIXM 5.1.1
+- [ ] Interface definitions match Service Definition
+
+### CP1 Requirements
+
+- [ ] Minimum 1 use case implemented
+- [ ] DNOTAM service provided (AISP) or consumed (ANSP)
+- [ ] Integration with AIFS baseline
+- [ ] EACP PKI certificates configured
+- [ ] Cyber security measures in place
+
+### Event Support
+
+- [ ] Runway Closure (RWY.CLS) supported
+- [ ] Taxiway Closure (TWY.CLS) supported
+- [ ] Stand Status supported
+- [ ] Obstacle New (OBS.NEW) supported
+- [ ] Navaid Unserviceable (NAV.UNS) supported
+- [ ] ATS Airspace Activation (SAA.ACT) supported
+
+### Use Cases
+
+- [ ] ePIB (IFR airports) - Required
+- [ ] Take-off Landing (IFR airports) - Required
+- [ ] Runway Contamination (SFC.CON) - Required
+- [ ] Airspace Status VFR - Required
+
+## References
+
+- **SWIM Registry Service Definition**: https://eur-registry.swim.aero/services/eurocontrol-digital-notam-subscription-and-request-service-010000
+- **EUROCONTROL SPEC-170**: SWIM-TI Yellow Profile (protocol requirements)
+- **EU Regulation 2021/116**: Common Project 1 (CP1) requirements
+- **AIXM 5.1.1**: Aeronautical Information Exchange Model
+- **EASA Regulations**: DS.GE (2013/1768)
+
+**Note on ED-254**: EUROCAE ED-254 is specifically for Extended AMAN (Arrival Sequence Service), NOT for DNOTAM. This has been a common source of confusion in the industry.
+
+## Glossary
+
+- **DNOTAM**: Digital Notice to Airmen
+- **Service Definition**: SWIM Registry document defining service interfaces and behavior
+- **Yellow Profile**: EUROCONTROL SPEC-170 - protocol and infrastructure requirements for ALL SWIM services
+- **ED-254**: EUROCAE Standard for Extended AMAN only (NOT applicable to DNOTAM)
+- **CP1**: Common Project 1 (SESAR Deployment)
+- **AISP**: Aeronautical Information Service Provider
+- **ANSP**: Air Navigation Service Provider
+- **AIFS**: Aeronautical Information Flight Service
+- **AMAP**: Aerodrome Mapping
+- **ePIB**: Electronic Pre-flight Information Bulletin
+- **EACP**: European Aviation Common PKI
+- **ASM**: Airspace Management
+- **LARA**: Local AIS Regional Automation (system)

@@ -1,0 +1,29 @@
+---
+description: Enforce semantic naming for all artifacts (files, resources, variables, pipelines, triggers, etc.)
+alwaysApply: true
+---
+
+# Naming Semantics — NON-NEGOTIABLE
+
+Names carry meaning. A bad name misleads. A good name eliminates ambiguity.
+
+## Rules
+
+- **Every name must be unambiguous**: If the name could refer to more than one thing, it is WRONG. Fix it before proceeding.
+- **Be specific, never generic**: `swim-consumer` is WRONG when `swim-dnotam-consumer` and `swim-ed254-consumer` both exist. Always qualify.
+- **File names must reflect full content**: A file containing resources for 3 pipelines cannot be named after just one of them.
+- **Anticipate siblings**: Before naming something, check if similar artifacts exist or will exist. Name to differentiate from the start.
+- **STOP and re-evaluate** every name before creating a file, resource, variable, class, pipeline, trigger, or any artifact. Ask: "If someone reads only this name, will they know exactly what it refers to?"
+
+## Anti-Patterns (FORBIDDEN)
+
+- Naming a file `trigger-consumer-validator.yaml` when it contains triggers for consumer-validator + operator + consumer
+- Naming a pipeline `swim-consumer-validator-ci` without specifying `dnotam` when ED-254 consumers also exist
+- Using `consumer` alone when there are multiple consumer types
+- Using `install-deps` when the step installs framework + extensions + validator-libs
+
+## Correct Pattern
+
+1. Before naming, list all existing and planned siblings
+2. Choose a name that uniquely identifies this artifact among its siblings
+3. If the scope grows beyond the original name, RENAME immediately

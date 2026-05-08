@@ -30,8 +30,11 @@ mvn archetype:generate \
   -DservicePrefix=Ffice \
   -DdataModel=FIXM \
   -DcollectionPrefix=ffice \
+  -DmodelArtifactId=swim-fixm-ffice-model \
   -DinteractiveMode=false
 ```
+
+> **`modelArtifactId` is required and has no default.** Provide the artifact ID of the data model project this consumer will parse. Examples: `swim-aixm-model`, `swim-fixm-model-ed254`, `swim-fixm-ffice-model`.
 
 ## Parameters
 
@@ -42,6 +45,7 @@ mvn archetype:generate \
 | `servicePrefix` | PascalCase prefix (currently reserved for future use) | `Ffice` |
 | `dataModel` | Data exchange model used by the service | `FIXM` |
 | `collectionPrefix` | MongoDB collection name prefix | `ffice` |
+| `modelArtifactId` | **REQUIRED. No default.** Artifact ID of the data model dependency (used in `SYNC_DEPS` and `deps` target) | `swim-aixm-model`, `swim-fixm-model-ed254`, `swim-fixm-ffice-model` |
 
 Standard Maven parameters (`groupId`, `artifactId`, `version`, `package`) are also supported.
 
@@ -55,6 +59,24 @@ chmod +x mvnw
 ```
 
 The archetype includes the full Maven wrapper (`mvnw`, `mvnw.cmd`, `.mvn/wrapper/maven-wrapper.properties`). The executable bit is not preserved by the Maven Archetype Plugin, so `chmod +x` is required on Unix systems.
+
+## Sync and Install
+
+Run once after generation to pull dependencies and install them into the local Maven repository:
+
+```bash
+make sync
+```
+
+Or run each step individually:
+
+```bash
+make pull          # git pull --ff-only on this project
+make pull-deps     # clone or pull all SYNC_DEPS from GitHub
+make install-deps  # install all SYNC_DEPS into local Maven repo
+```
+
+`SYNC_DEPS` is pre-configured in the generated `Makefile` using the value you provided for `modelArtifactId` at generation time.
 
 ## Verify
 
@@ -179,7 +201,7 @@ Environment variables with sensible defaults are used for deployment flexibility
 
 After generating the project:
 
-1. Add your data model dependency to `pom.xml` (e.g., `aixm-model` for DNOTAM, `fixm-ed254-model` for ED-254)
+1. Run `make sync` to pull dependencies and install them (the `Makefile` already has the correct `modelArtifactId` set from generation time)
 2. Add your outbox router extension to `pom.xml` (e.g., `swim-outbox-kafka-dnotam`)
 3. Implement the 10 domain-specific classes listed above
 4. Create a `compose.yml` for local development infrastructure (MongoDB, Kafka, Artemis, Consumer Validator), or use [Quarkus Dev Services](https://quarkus.io/guides/dev-services) to provision them automatically

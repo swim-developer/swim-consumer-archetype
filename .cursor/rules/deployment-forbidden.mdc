@@ -1,0 +1,39 @@
+---
+description: AI must ask for explicit confirmation before executing any deployment command
+alwaysApply: true
+---
+
+# External Deployment — CONFIRMATION REQUIRED (NON-NEGOTIABLE)
+
+The AI **MAY** execute deployment commands to Kubernetes/OpenShift clusters, but **ONLY after explicit user confirmation**.
+
+## Confirmation Protocol
+
+1. **Show the exact command** that will be executed
+2. **Ask for confirmation** — e.g. "Posso executar?"
+3. **Wait for explicit YES** from the user
+4. Only then execute the command
+5. **NEVER batch multiple deploy commands** — confirm each one individually
+
+## Deployment Commands (require confirmation)
+
+- `oc apply` / `oc create` / `oc delete` / `oc rollout restart`
+- `helm install` / `helm upgrade` / `helm uninstall`
+- `./deploy.sh` / `./cleanup.sh` / `./build-and-push.sh`
+- `make deploy-*` / `make infra-install` / `make infra-uninstall`
+- `podman push` / `podman build` for images pushed to remote registries
+- Any command that modifies a running Kubernetes/OpenShift cluster
+
+## FORBIDDEN Actions (System-Level) — NEVER, even with confirmation
+
+- Starting/stopping Podman machine (`podman machine start/stop`)
+- Any command that changes the state of the local virtualization layer
+
+## ALLOWED Actions (no confirmation needed)
+
+- Read cluster state (`oc get`, `oc describe`, `oc logs`)
+- Verify code compiles (`mvn clean package -DskipTests`)
+- Create/edit scripts, Makefiles, YAML files
+- Run local `podman compose up/down` for dev tools
+- Run `make sonar-full`, `make sonar-analyze` and similar local analysis tasks
+- Run local Testcontainers-based integration tests

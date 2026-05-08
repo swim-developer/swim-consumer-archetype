@@ -1,0 +1,491 @@
+---
+alwaysApply: true
+---
+
+# CP1 SWIM Services - Complete Catalog
+
+## Overview
+
+CP1 (Common Project 1) defines multiple SWIM service families beyond the core AIM (Aeronautical Information Management) services. This document catalogs all CP1 SWIM services with their requirements, data formats, and implementation details.
+
+## Service Families Structure
+
+### Family 5.2.1 - SWIM PKI and Cyber Security
+See `swim-implementation-patterns.mdc` for security patterns
+
+### Family 5.3.1 - Aeronautical Information Exchanges
+- AIFS (Aeronautical Information Flight Service)
+- AMAP (Aerodrome Mapping)
+- DNOTAM (Digital NOTAM)
+
+See `swim-dnotam-ed254.mdc` and `swim-sesar-cp1.mdc` for details
+
+### Family 5.4.1 - Meteorological Information Exchange
+**Target Date**: 31st December 2025
+
+## Meteorological Information Exchange Services
+
+### Service Categories
+
+1. **Aerodrome Meteorological Information Service**
+2. **En-Route and Approach Meteorological Information Service**
+3. **Network Meteorological Information Service**
+
+### Certified MET Service Providers
+
+**Mandate**: Certified MET-Providers are mandated to provide data covered by CP1 services
+
+**Scope**: Airports listed in ICAO EUR eANP (Electronic Air Navigation Plan), Volume II, MET Table II-2
+
+### Aerodrome Meteorological Information Service
+
+#### Current System (Product-Centric)
+
+**Legacy Products**:
+- **METAR/SPECI**: Meteorological Aerodrome Reports
+- **TAF**: Terminal Aerodrome Forecast
+
+**Format**: Text-based (TAC - Traditional Alphanumeric Codes)
+
+#### CP1 SWIM Service (Basic)
+
+**Data Format**: **IWXXM** (ICAO Meteorological Information Exchange Model)
+- Machine-readable XML format
+- Standardized schema
+- Validation support
+
+**Service Patterns**:
+- **Publish/Subscribe**: Real-time weather updates
+- **Request/Reply**: On-demand weather data retrieval
+
+**Service Definitions**: Available on SWIM Registry
+
+**IWXXM Services**:
+1. **IWXXM METAR-SPECI Subscription and Request Service**
+2. **IWXXM TAF Subscription and Request Service**
+
+#### Future Enhanced Services (Post-CP1)
+
+##### Meteorological Aerodrome Observation Subscription and Request Service
+
+**Additional Parameters**:
+- Crosswind component
+- Runway temperature
+- QNH (altimeter setting)
+- Temperature data (for Transition Altitude/Level calculation)
+
+**Subscription Capabilities**:
+- **Change-based**: Receive updates when QNH/temperature changes
+- **Time-based**: Subscribe to parameters at 10 sec / 1 min / 5 min intervals
+- **Historical**: Graphical display of ceiling information for last 1 hour
+
+##### Meteorological Aerodrome Forecast Subscription and Request Service
+
+**Subscription Types**:
+- **Visibility/Ceiling**: Automated pre-warnings for LVP (Low Visibility Procedures) activation
+- **Wind Information**: Automated pre-warnings for runway changes
+
+**Recommendation**: Provider and consumer should collaborate to define enhanced services
+
+### En-Route and Approach Meteorological Information Service
+
+#### Current System (Product-Centric)
+
+**Legacy Products**:
+- **SIGMET**: Significant Meteorological Information
+- **AIRMET**: Airmen's Meteorological Information
+- **Gridded global forecasts**: WAFS (World Area Forecast System)
+
+#### CP1 SWIM Service (Basic)
+
+**Data Format**: **IWXXM**
+
+**Service Patterns**:
+- **Publish/Subscribe**: Real-time weather phenomena notifications
+- **Request/Reply**: On-demand retrieval
+
+**Service Definitions**: SIGMET service definitions available on SWIM Registry
+
+**IWXXM Service**:
+- **IWXXM SIGMET Subscription and Request Service**
+
+#### SADIS (Secure Aviation Data Information Service)
+
+**Provider**: WAFC London (UK MET Office on behalf of ICAO)
+
+**New API**: Available since mid-2024
+
+**SADIS Services**:
+1. **SADIS WAFS Gridded Data Service**
+2. **SADIS WAFS OpMet API Data Service**
+
+**Data Provided**:
+
+**WAFS Products**:
+- Significant Weather Charts
+- Upper Wind forecasts
+- Air temperature forecasts
+- Air humidity forecasts
+- Icing forecasts
+- Turbulence forecasts
+- Flight level and temperature of tropopause
+
+**OPMET Information** (TAC & IWXXM):
+- METAR
+- TAF
+- SIGMET
+- Advisories for:
+  - Volcanic Ash
+  - Tropical Cyclones
+  - Space Weather
+
+**Enhanced Resolution**: Higher resolution forecasts available via new API
+
+**Documentation**: SADIS User Guide on ICAO website
+
+##### SADIS Cost Recovery
+
+**Cost Sharing Model**: Based on ATK (Available Tonne-Kilometres in Scheduled Services)
+
+**Calculation**:
+- Proportion of total ATK for each State
+- States with large airline fleets pay more
+
+**Example (2018)**:
+- Total SADIS costs: £559,231
+- Total ATK: 839,116,304
+
+| Country | ATK | Percentage | Share (2020) |
+|---------|-----|------------|--------------|
+| Austria | 3,569,172 | 0.425% | £2,154.63 |
+| Germany | 42,224,429 | 5.032% | £25,489.91 |
+
+**Contractor**: CAA or designated entities
+
+**Governance**: SCRAG (SADIS Cost Recovery Administrative Group)
+
+### Network Meteorological Information Service
+
+**Purpose**: Network-wide meteorological information for ATM
+
+**Current Provision**:
+- **EUMETNET HMI**: Human-Machine Interface
+- **NM Distribution**: PDF/PNG via email (NOT SWIM compliant)
+- **DWD SWIM Service**: Developed by Deutscher Wetterdienst on behalf of EUMETNET members
+
+**Compliance**: Certified MET-Providers contributing to CBCF (Cross-Border Collaborative Forecasting) are compliant
+
+**Service Definition**: Available on SWIM Registry
+
+### MET3SG (MET SWIM Services Sub-Group)
+
+**Established**: 2022
+
+**Purpose**:
+- Support European stakeholders with CP1 MET service implementation guidelines
+- Facilitate information sharing
+- Monitor implementation progress
+- Coordinate development of reference material
+
+**Coordination**: Works with SESAR Deployment Manager (SDM)
+
+**Structure**: Multiple Task Teams for specific challenges
+
+#### Service Architecture Task Team
+
+**Responsibilities**:
+- Develop Service Definitions for MET SWIM Services
+- Define data scope and format
+- Define service functionalities (request/reply, pub/sub)
+- Specify data quality requirements
+
+**Delivered Service Definitions**:
+1. IWXXM METAR-SPECI Subscription and Request Service
+2. IWXXM TAF Subscription and Request Service
+3. IWXXM SIGMET Subscription and Request Service
+
+## Data Services
+
+### Weather Services
+
+**Providers**: Certified MET Service Providers
+
+**Consumers**:
+- ANSPs
+- Airport Operators
+- Airlines
+- General Aviation
+
+**Protocols**: SWIM-TI Yellow Profile (HTTP/REST + AMQP)
+
+### Surveillance Services
+
+**Purpose**: Aircraft position and tracking data
+
+**Note**: Detailed requirements not fully specified in CP1 (future development)
+
+## Flight and Flow Information
+
+### FF-ICE (Flight and Flow Information for a Collaborative Environment)
+
+**Status**: Requirements defined but implementation paused in some regions
+
+**Purpose**: Collaborative flight planning and management
+
+**Note**: Not part of initial CP1 deployment (post-CP1 enhancement)
+
+### Flight Plans
+
+**Current**: AFTN/AMHS distribution
+
+**Future**: SWIM-based flight plan exchange
+
+**Integration**: With NOTAMs and weather services
+
+## Extended AMAN (Arrival Manager)
+
+**Purpose**: Extended arrival sequencing for major airports
+
+**Specification**: EUROCAE ED-254
+
+**Requirements**:
+- **EAMAN-004**: Service provision as per ED-254
+- **EAMAN-006**: Upstream ATSU consumption compliance
+
+**Service Bindings**:
+- **WS-Light**: Arrival Sequence Publisher interface (REQ-017254)
+- **AMQP Messaging**: Arrival Sequence Subscriber interface (REQ-0200)
+
+**Payload Schemas**: Defined in Service Description Document
+
+**EASA Regulation**: DS.GE (2013/1768) for Extended AMAN equipment
+
+**Note**: Multiple deployment milestones with specific requirements
+
+## Service Registry
+
+### SWIM Registry
+
+**Purpose**: Central catalog of SWIM service definitions
+
+**Contents**:
+- Service descriptions
+- Interface specifications
+- Payload schemas
+- Endpoint information
+- Provider/consumer lists
+
+**Access**: Available to authorized stakeholders
+
+**Maintenance**: Updated by SESAR Deployment Manager
+
+## Implementation Patterns
+
+### Service Definition Structure
+
+**Components**:
+1. **Service Description Document**
+   - Service overview
+   - Functional capabilities
+   - Quality of Service (QoS) parameters
+
+2. **Interface Specifications**
+   - WS-Light binding details
+   - AMQP binding details
+   - Protocol versions
+
+3. **Information Definition**
+   - Data models
+   - Payload schemas
+   - Message formats
+
+4. **Operational Procedures**
+   - Service lifecycle
+   - Error handling
+   - Maintenance windows
+
+### Common Patterns
+
+#### Publish/Subscribe
+
+**Use Cases**:
+- Real-time weather updates (METAR, TAF, SIGMET)
+- DNOTAM event notifications
+- Arrival sequence updates
+
+**Protocol**: AMQP 1.0 over TLS 1.2
+
+**Pattern**:
+```
+Publisher → Topic → Broker → Queue → Subscriber
+```
+
+#### Request/Reply
+
+**Use Cases**:
+- On-demand weather data retrieval
+- Historical data queries
+- Service metadata requests
+
+**Protocol**: HTTP/REST over TLS 1.2
+
+**Pattern**:
+```
+Client → HTTP Request → Service → HTTP Response → Client
+```
+
+### Data Formats
+
+#### IWXXM (ICAO Meteorological Information Exchange Model)
+
+**Format**: XML
+
+**Version**: Aligned with ICAO standards
+
+**Schemas**: Available from ICAO
+
+**Benefits**:
+- Machine-readable
+- Standardized structure
+- Validation support
+- International interoperability
+
+#### AIXM (Aeronautical Information Exchange Model)
+
+**Format**: XML
+
+**Version**: 5.1
+
+**Usage**: AIFS, AMAP, DNOTAM
+
+**Benefits**:
+- Comprehensive aeronautical data model
+- Feature-based representation
+- Temporal validity support
+
+#### JSON
+
+**Usage**: REST API responses, lightweight data exchange
+
+**Benefits**:
+- Human-readable
+- Widely supported
+- Smaller payload size
+
+## Integration Considerations
+
+### Multi-Service Correlation
+
+**Example**: ePIB (Electronic Pre-flight Information Bulletin)
+
+**Required Services**:
+- AIFS (static aerodrome data)
+- AMAP (aerodrome mapping)
+- DNOTAM (operational changes)
+- MET Services (weather)
+
+**Integration Point**: Correlate data from multiple services to create comprehensive briefing
+
+### Temporal Consistency
+
+**Challenge**: Ensure data from different services is temporally aligned
+
+**Solution**:
+- Common time reference (NTP)
+- Timestamp validation
+- AIRAC cycle synchronization
+
+### Data Quality
+
+**Requirements**:
+- Validation against schemas
+- Completeness checks
+- Timeliness monitoring
+- Accuracy verification
+
+**Responsibility**: Service providers must ensure data quality
+
+## Compliance Summary
+
+### For MET Service Providers
+
+- [ ] Provide IWXXM METAR-SPECI service
+- [ ] Provide IWXXM TAF service
+- [ ] Provide IWXXM SIGMET service
+- [ ] Publish/Subscribe pattern implemented
+- [ ] Request/Reply pattern implemented
+- [ ] Service definitions published on SWIM Registry
+- [ ] Compliance by 31st December 2025
+
+### For Service Consumers
+
+- [ ] Consume required MET services
+- [ ] Integrate into operational systems
+- [ ] Support IWXXM format
+- [ ] Implement both pub/sub and request/reply
+- [ ] Minimum 1 use case operational
+
+### For All Stakeholders
+
+- [ ] SWIM-TI Yellow Profile compliance
+- [ ] EACP PKI certificates configured
+- [ ] Service registered in SWIM Registry
+- [ ] Monitoring and reporting in place
+
+## Future Enhancements
+
+### Post-CP1 Services
+
+1. **Enhanced MET Services**
+   - High-frequency observations
+   - Additional parameters
+   - Change-based subscriptions
+
+2. **FF-ICE Implementation**
+   - Collaborative flight planning
+   - Flight plan optimization
+   - Flow management integration
+
+3. **Advanced Surveillance**
+   - Real-time aircraft tracking
+   - Trajectory prediction
+   - Conflict detection
+
+4. **Network Services**
+   - Cross-border coordination
+   - Capacity management
+   - Demand prediction
+
+## References
+
+- **CP1 Regulation (EU 116/2021)**: Service mandates
+- **ICAO EUR eANP Volume II**: MET Table II-2 (airport list)
+- **IWXXM Specification**: ICAO meteorological data exchange
+- **SADIS User Guide**: ICAO website
+- **SWIM Registry**: Service definition catalog
+- **MET3SG Documentation**: Implementation guidelines
+
+## Glossary
+
+- **IWXXM**: ICAO Meteorological Information Exchange Model
+- **METAR**: Meteorological Aerodrome Report
+- **SPECI**: Special Meteorological Report
+- **TAF**: Terminal Aerodrome Forecast
+- **SIGMET**: Significant Meteorological Information
+- **AIRMET**: Airmen's Meteorological Information
+- **WAFS**: World Area Forecast System
+- **SADIS**: Secure Aviation Data Information Service
+- **WAFC**: World Area Forecast Centre
+- **OPMET**: Operational Meteorological Information
+- **TAC**: Traditional Alphanumeric Codes
+- **LVP**: Low Visibility Procedures
+- **QNH**: Altimeter Setting (Sea Level Pressure)
+- **CBCF**: Cross-Border Collaborative Forecasting
+- **EUMETNET**: European Meteorological Services Network
+- **DWD**: Deutscher Wetterdienst (German Weather Service)
+- **MET3SG**: MET SWIM Services Sub-Group
+- **FF-ICE**: Flight and Flow Information for a Collaborative Environment
+- **AMAN**: Arrival Manager
+- **EAMAN**: Extended Arrival Manager
+- **ATK**: Available Tonne-Kilometres
+- **SCRAG**: SADIS Cost Recovery Administrative Group

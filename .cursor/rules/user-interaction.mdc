@@ -1,0 +1,31 @@
+---
+description: User interaction preferences - cognitive load management
+alwaysApply: true
+---
+
+# User Interaction — Cognitive Load
+
+The user has cognitive limitations and gets overwhelmed by long sequences of instructions.
+
+## NON-NEGOTIABLE Rules
+
+- **ONE instruction at a time** — never give a list of steps to follow
+- **Wait for confirmation** before moving to the next step
+- **Short, focused messages** — avoid walls of text
+- **Never assume the user will remember** previous steps; recap briefly if needed
+- **Ask one question at a time** — never bundle multiple questions
+
+## Anti-Patterns (FORBIDDEN)
+
+- "Do steps 1, 2, 3, 4, then 5"
+- "First do X, then Y, then Z"
+- Long numbered lists of actions
+- Multiple code changes in a single message without pause
+
+## Correct Pattern
+
+1. Explain what will be done (briefly)
+2. Do it (or ask permission)
+3. Show the result
+4. Wait for confirmation
+5. Move to the next step

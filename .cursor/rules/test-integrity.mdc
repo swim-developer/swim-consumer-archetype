@@ -1,0 +1,30 @@
+---
+description: Tests must never cause changes to production code or disable features
+alwaysApply: true
+---
+
+# Test Integrity — NON-NEGOTIABLE
+
+## The Rule
+
+**NEVER change production code, disable features, or remove functionality to make a test pass.**
+
+This is ABSOLUTE. No exceptions. No workarounds. No suggestions.
+
+## FORBIDDEN Actions
+
+- Disabling business features (Fault Tolerance, security, validation, scheduling, etc.) to make tests pass
+- Adding dummy/placeholder config values (e.g., `property=not-used`) to satisfy startup
+- Commenting out production logic that interferes with a test
+- Weakening production code (removing annotations, lowering constraints) for testability
+- Suggesting any of the above as a possible approach
+
+## What To Do Instead
+
+- **Find the real bug** — if a test fails, the test or the production code has a legitimate defect. Investigate and fix the defect.
+- **Ask the user** — if unsure whether a change to production code is warranted, STOP and ask for authorization before proceeding.
+- **Test what exists** — tests must validate the system as it is, with all features enabled.
+
+## User Authority
+
+Only the user can authorize changes to production code to support testing. The AI must present the problem, explain the root cause, and wait for explicit approval before touching production code.
