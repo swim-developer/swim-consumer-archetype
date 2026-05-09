@@ -20,7 +20,7 @@ SYNC_DEPS := swim-developer-root ${modelArtifactId} swim-developer-framework swi
 
 .PHONY: help sync pull pull-deps install-deps deps build test jvm \
         native-amd64 native-arm64 manifest push native \
-        sonar security-deps security-image
+        sonar sonar-up sonar-down security-deps security-image
 
 help:
 	@echo ""
@@ -45,7 +45,9 @@ help:
 	@echo "    native             Full native sequence (amd64 + arm64 + manifest + push)"
 	@echo ""
 	@echo "  Analysis:"
-	@echo "    sonar              SonarQube analysis  (requires SONAR_TOKEN=<token>)"
+	@echo "    sonar-up           Start SonarQube at http://localhost:9000"
+	@echo "    sonar              Run SonarQube analysis (requires SonarQube running)"
+	@echo "    sonar-down         Stop SonarQube"
 	@echo "    security-deps      OWASP Dependency-Check for application dependencies"
 	@echo "    security-image     Trivy vulnerability scan for container image"
 	@echo ""
@@ -157,8 +159,30 @@ push:
 
 native: native-amd64 native-arm64 manifest push
 
+sonar-up:
+	@echo "Starting SonarQube..."
+	@podman rm -f ${symbol_dollar}(IMAGE)-sonarqube 2>/dev/null || true
+	podman run -d \
+		--name ${symbol_dollar}(IMAGE)-sonarqube \
+		-e SONAR_FORCEAUTHENTICATION=false \
+		-e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true \
+		-p 9000:9000 \
+		docker.io/library/sonarqube:25.4.0.105899-community
+	@echo "Waiting for SonarQube to be ready..."
+	@until curl -sf http://localhost:9000/api/system/status | grep -q '"status":"UP"'; do sleep 3; done
+	@echo "Granting anonymous scan permission..."
+	@curl -sf -u admin:admin -X POST "http://localhost:9000/api/permissions/add_group" \
+		-d "permission=scan&groupName=Anyone" > /dev/null || true
+	@curl -sf -u admin:admin -X POST "http://localhost:9000/api/permissions/add_group" \
+		-d "permission=provisioning&groupName=Anyone" > /dev/null || true
+	@echo "SonarQube is up at http://localhost:9000"
+
+sonar-down:
+	podman rm -f ${symbol_dollar}(IMAGE)-sonarqube
+
 sonar:
 	./mvnw clean verify sonar:sonar \
+		-DskipITs=false \
 		-Dsonar.host.url=${symbol_dollar}(SONAR_URL) \
 		${symbol_dollar}(if ${symbol_dollar}(SONAR_TOKEN),-Dsonar.login=${symbol_dollar}(SONAR_TOKEN),) \
 		-Dsonar.projectKey=${artifactId} \
