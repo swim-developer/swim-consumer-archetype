@@ -41,25 +41,12 @@ There are no tests in this project. Validation is done by generating a consumer 
 src/main/resources/
   archetype-resources/
     src/main/java/
-      domain/model/            # Event, Subscription, FilterDimension, SubscriptionCommand
-      application/
-        port/in/               # ManageSubscriptionPort
-        port/out/              # EventStore, SubscriptionStore, RemoteSubscriptionManagerPort
-        service/               # EventPersistenceService, EventDataValidator, EventFilterService, ProcessorCallbacks, ProcessingMetrics
-        usecase/               # EventProcessingUseCase, SubscriptionUseCase
-      infrastructure/
-        in/rest/               # REST resources + DTOs
-        in/amqp/               # InboxMessageHandler (Kafka inbox reader)
-        out/persistence/       # Mongo stores, indexes, projections, repository
-        out/client/            # SubscriptionManagerRestClient + adapter
-        out/messaging/         # OutboxMessageHandler
-        out/xml/               # EventExtractor, JaxbUnmarshallerPool, XmlEnvelopeParser (TODO stubs)
-        out/subscription/      # __servicePrefix__SubscriptionRenewalStrategy
-        out/mapper/            # SubscriptionMapper
+      domain/model/
+      application/port/{in,out}/, application/service/, application/usecase/
+      infrastructure/in/{rest,amqp}/, infrastructure/out/{persistence,client,messaging,xml,subscription,mapper}/
     src/main/resources/
       application.properties   # Velocity template with ${serviceName}, ${dollar}{ENV_VAR} patterns
-    Makefile                   # Generated Makefile for sync/build/test/sonar/container targets
-    mvnw, mvnw.cmd, .mvn/     # Maven wrapper (included in generated project)
+    Makefile, mvnw, mvnw.cmd, .mvn/
   META-INF/maven/
     archetype-metadata.xml     # Archetype descriptor — defines required properties and file sets
 ```
@@ -86,9 +73,6 @@ Defined in `archetype-metadata.xml`. `modelArtifactId` is **required with no def
 
 ## Non-Negotiable Rules
 
-### AI Authorship Prohibition
-NEVER add `Co-Authored-By` or any AI/tool reference to commit messages. A global git hook at `~/.config/git/hooks/commit-msg` strips these automatically, but the rule applies regardless.
-
 ### Consumer-Validator Architecture
 A Consumer NEVER connects to the Provider of the same module. The "provider" from a Consumer's perspective is always a **Consumer Validator** (its own Artemis + mock Subscription Manager). When editing templates that reference provider endpoints, ensure they point to `*-consumer-validator`, never to `*-provider`.
 
@@ -96,15 +80,7 @@ A Consumer NEVER connects to the Provider of the same module. The "provider" fro
 When changes are made to a consumer project (e.g., `swim-digital-notam-consumer`), check whether the modified class also exists as a template here. Mechanical/infrastructure classes should be updated in the archetype; domain-specific stubs should not. After updating, run `mvn clean install` on this archetype.
 
 ### Code Standards (apply to generated code too)
-- Max 400 lines per file
-- No inner/nested classes — every class in its own file
-- Use `@Slf4j` (Lombok) for logging, never `LoggerFactory.getLogger()`
-- No comments in code
-- No Java Reflection anywhere
-- Build with `mvn clean package -DskipTests` (not `-Dmaven.test.skip=true`)
 - Integration tests: `./mvnw verify -DskipITs=false` (generated projects default `skipITs=true`)
-- Container runtime: **Podman only** (not Docker)
-- JSON processing in shell: **jq only** (not Python/Node)
 - Testing: RestAssured for HTTP, AssertJ for assertions
 
 ### Naming
@@ -115,7 +91,7 @@ Every name must be unambiguous. Never use bare `consumer` when multiple consumer
 - **Runtime**: Quarkus (JDK 21)
 - **Database**: MongoDB via Panache
 - **Messaging**: Kafka (inbox/outbox), AMQP (external provider via Artemis)
-- **Security**: mTLS, TLS 1.2 exclusively
+- **Security**: mTLS, TLS 1.3 (SPEC-170 SWIM-TIYP-0008: TLS 1.2 deprecated)
 - **Observability**: OpenTelemetry, Micrometer/Prometheus
 - **Build**: Maven with wrapper, Makefile for workflow automation
 
