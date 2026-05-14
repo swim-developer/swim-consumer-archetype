@@ -2,3 +2,8 @@ target/
 *.class
 *.jar
 .DS_Store
+
+# AI/IDE tools
+.cursor/
+.cursorrules
+.claude/
