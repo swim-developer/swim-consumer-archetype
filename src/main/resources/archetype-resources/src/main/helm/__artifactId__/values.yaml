@@ -1,0 +1,59 @@
+namespace: swim-demo
+
+appName: ${artifactId}
+
+labels:
+  app: ${artifactId}
+  app.kubernetes.io/part-of: swim-${serviceName}
+
+image:
+  repository: quay.io/masales/${artifactId}
+  tag: latest
+  pullPolicy: Always
+
+replicas: 1
+
+resources:
+  requests:
+    memory: 64Mi
+    cpu: 100m
+  limits:
+    memory: 1Gi
+    cpu: "1"
+
+service:
+  port: 8080
+
+hpa:
+  enabled: false
+
+config:
+  mongodbDatabase: "swim-${serviceName}"
+  subscriptions: '[]'
+  swimProviders: '[]'
+  swimValidationEnabled: "true"
+  kafkaBootstrapServers: "kafka-kafka-bootstrap.swim-demo.svc.cluster.local:9092"
+  otelEnabled: "false"
+  otelEndpoint: ""
+  otelHeaders: ""
+  prometheusEnabled: "true"
+
+certManager:
+  enabled: true
+  issuerName: swim-ca-issuer
+  issuerKind: ClusterIssuer
+  keystorePassword: changeit
+
+mongodb:
+  host: "${serviceName}-consumer-mongodb.swim-demo.svc.cluster.local"
+  port: "27017"
+  secretName: ${serviceName}-consumer-mongodb-credentials
+  userKey: database-user
+  passwordKey: database-password
+
+mtls:
+  keystorePassword: changeit
+  truststorePassword: changeit
+
+serviceMonitor:
+  enabled: false
